@@ -98,14 +98,27 @@ public class EventoAleatorio implements Serializable {
         );
     }
 
+    public static EventoAleatorio crearElSacrificio() {
+        return new EventoAleatorio(
+                "SACRIFICIO",
+                "El Sacrificio de Sangre",
+                "Frente a un altar umbrío iluminado por fuego espectral, una presencia arcana susurra:\n" +
+                "'Puedo traer de vuelta a un compañero caído de tu party... pero todos los vivos deberán pagar con su propia sangre'.\n\n" +
+                "¿Aceptan realizar el sacrificio?",
+                "Sellar el pacto (Héroes vivos sacrifican 50% de HP actual; un compañero caído revive con 40% HP)",
+                "Rechazar el ritual y rezar por los caídos (+90 XP grupal por templanza)"
+        );
+    }
+
     public static EventoAleatorio crearAleatorio(Random rnd) {
-        int eleccion = rnd.nextInt(6);
+        int eleccion = rnd.nextInt(7);
         return switch (eleccion) {
             case 0 -> crearBebidaMisteriosa();
             case 1 -> crearPasilloPeligroso();
             case 2 -> crearRegaloDeLaSuegra();
             case 3 -> crearEstatuaGauchitoGil();
             case 4 -> crearKioscoErrante();
+            case 5 -> crearElSacrificio();
             default -> crearPuestoDeDiarios();
         };
     }
@@ -211,6 +224,38 @@ public class EventoAleatorio implements Serializable {
                     sb.append("Un buen mate cocido con bizcochitos en la vereda revitaliza a toda la muchachada.\n");
                     party.recuperarPorcentaje(0.40);
                     sb.append("  Toda la party recuperó el 40% de su Vida y Maná máximos.\n");
+                }
+            }
+            case "SACRIFICIO" -> {
+                if (opcion == 1) {
+                    Personaje muerto = null;
+                    for (Personaje p : party.getMiembros()) {
+                        if (!p.estaVivo()) {
+                            muerto = p;
+                            break;
+                        }
+                    }
+                    if (muerto != null) {
+                        sb.append("¡La sangre sella el pacto! Toda la party entrega la mitad de sus fuerzas vitales.\n");
+                        for (Personaje p : party.getMiembros()) {
+                            if (p.estaVivo() && p != muerto) {
+                                int sacrificio = p.getVida() / 2;
+                                p.recibirDanioDirecto(sacrificio);
+                                sb.append("  • ").append(p.getNombre()).append(" sacrificó ").append(sacrificio).append(" HP (HP actual: ").append(p.getVida()).append(").\n");
+                            }
+                        }
+                        int hpRevivido = Math.max(25, (int) (muerto.getVidaMaxima() * 0.40));
+                        muerto.revivir(hpRevivido);
+                        sb.append("  ¡").append(muerto.getNombre().toUpperCase()).append(" HA SIDO RESUCITADO con ").append(hpRevivido).append(" HP!\n");
+                    } else {
+                        sb.append("No hay aliados caídos en la party. El altar recompensa la vitalidad del grupo otorgando +60 MP a cada uno.\n");
+                        for (Personaje p : party.getMiembros()) {
+                            p.recuperarMana(60);
+                        }
+                    }
+                } else {
+                    sb.append("Rechazan la magia oscura y siguen adelante fortalecidos en su convicción moral (+90 XP grupal).\n");
+                    party.repartirExperiencia(90);
                 }
             }
             default -> { // BEBIDA

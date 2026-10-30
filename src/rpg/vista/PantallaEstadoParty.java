@@ -79,7 +79,7 @@ public class PantallaEstadoParty extends JPanel {
         // --- COLUMNA IZQUIERDA: Selector, Sprite, Barra XP y Stats ---
         JPanel pnlFicha = new JPanel();
         pnlFicha.setLayout(new BoxLayout(pnlFicha, BoxLayout.Y_AXIS));
-        pnlFicha.setBackground(new Color(24, 28, 40, 225));
+        pnlFicha.setBackground(new Color(24, 28, 40)); // Sólido sin alpha para evitar ghosting
         pnlFicha.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createTitledBorder(
                         BorderFactory.createLineBorder(EstilosUI.BORDE_SUAVE, 1),
@@ -153,7 +153,7 @@ public class PantallaEstadoParty extends JPanel {
         // 1. Panel de Puntos de Atributo
         JPanel pnlPuntos = new JPanel();
         pnlPuntos.setLayout(new BoxLayout(pnlPuntos, BoxLayout.Y_AXIS));
-        pnlPuntos.setBackground(new Color(24, 28, 40, 225));
+        pnlPuntos.setBackground(new Color(24, 28, 40));
         pnlPuntos.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createTitledBorder(
                         BorderFactory.createLineBorder(EstilosUI.BORDE_SUAVE, 1),
@@ -193,12 +193,12 @@ public class PantallaEstadoParty extends JPanel {
         pnlPuntos.add(pnlBotonesAtributos);
 
         pnlDerecho.add(pnlPuntos);
-        pnlDerecho.add(Box.createVerticalStrut(10));
+        pnlDerecho.add(Box.createVerticalStrut(8));
 
         // 2. Panel de Desbloqueo y Selección de Habilidades
         panelHabilidades = new JPanel();
         panelHabilidades.setLayout(new BoxLayout(panelHabilidades, BoxLayout.Y_AXIS));
-        panelHabilidades.setBackground(new Color(24, 28, 40, 225));
+        panelHabilidades.setBackground(new Color(24, 28, 40));
         panelHabilidades.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createTitledBorder(
                         BorderFactory.createLineBorder(EstilosUI.BORDE_SUAVE, 1),
@@ -207,28 +207,40 @@ public class PantallaEstadoParty extends JPanel {
                 BorderFactory.createEmptyBorder(8, 12, 8, 12)
         ));
         pnlDerecho.add(panelHabilidades);
-        pnlDerecho.add(Box.createVerticalStrut(10));
+        pnlDerecho.add(Box.createVerticalStrut(8));
 
-        // 3. Panel de Equipamiento
+        // 3. Panel de Equipamiento (Compacto y equilibrado)
         JPanel pnlEquipo = new JPanel();
         pnlEquipo.setLayout(new BoxLayout(pnlEquipo, BoxLayout.Y_AXIS));
-        pnlEquipo.setBackground(new Color(24, 28, 40, 225));
+        pnlEquipo.setBackground(new Color(24, 28, 40));
         pnlEquipo.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createTitledBorder(
                         BorderFactory.createLineBorder(EstilosUI.BORDE_SUAVE, 1),
                         "EQUIPAMIENTO (INVENTARIO COMPARTIDO)", 0, 0, EstilosUI.FUENTE_BOLD, EstilosUI.COLOR_ORO
                 ),
-                BorderFactory.createEmptyBorder(8, 12, 8, 12)
+                BorderFactory.createEmptyBorder(6, 10, 6, 10)
         ));
 
         // Armas
         JPanel filaArmas = new JPanel(new BorderLayout(8, 0));
         filaArmas.setOpaque(false);
-        filaArmas.add(new JLabel("Armas disponibles:"), BorderLayout.WEST);
+        JLabel lblArmasTit = new JLabel("Armas:");
+        lblArmasTit.setFont(new Font("Segoe UI", Font.BOLD, 12));
+        lblArmasTit.setPreferredSize(new Dimension(75, 26));
+        filaArmas.add(lblArmasTit, BorderLayout.WEST);
+
         comboArmas = new JComboBox<>();
+        comboArmas.setFont(new Font("Segoe UI", Font.PLAIN, 11));
         filaArmas.add(comboArmas, BorderLayout.CENTER);
+
         btnEquiparArma = EstilosUI.crearBoton("Equipar", new Color(39, 174, 96), new Color(46, 204, 113));
+        btnEquiparArma.setFont(new Font("Segoe UI", Font.BOLD, 11));
+        btnEquiparArma.setPreferredSize(new Dimension(80, 26));
+
         btnDesequiparArma = EstilosUI.crearBoton("Desequipar", new Color(140, 40, 40), new Color(192, 57, 43));
+        btnDesequiparArma.setFont(new Font("Segoe UI", Font.BOLD, 11));
+        btnDesequiparArma.setPreferredSize(new Dimension(95, 26));
+
         JPanel btnArmas = new JPanel(new FlowLayout(FlowLayout.RIGHT, 4, 0));
         btnArmas.setOpaque(false);
         btnArmas.add(btnEquiparArma);
@@ -236,16 +248,28 @@ public class PantallaEstadoParty extends JPanel {
         filaArmas.add(btnArmas, BorderLayout.EAST);
         pnlEquipo.add(filaArmas);
 
-        pnlEquipo.add(Box.createVerticalStrut(8));
+        pnlEquipo.add(Box.createVerticalStrut(6));
 
         // Armaduras
         JPanel filaArmaduras = new JPanel(new BorderLayout(8, 0));
         filaArmaduras.setOpaque(false);
-        filaArmaduras.add(new JLabel("Armaduras disp:"), BorderLayout.WEST);
+        JLabel lblArmadTit = new JLabel("Armaduras:");
+        lblArmadTit.setFont(new Font("Segoe UI", Font.BOLD, 12));
+        lblArmadTit.setPreferredSize(new Dimension(75, 26));
+        filaArmaduras.add(lblArmadTit, BorderLayout.WEST);
+
         comboArmaduras = new JComboBox<>();
+        comboArmaduras.setFont(new Font("Segoe UI", Font.PLAIN, 11));
         filaArmaduras.add(comboArmaduras, BorderLayout.CENTER);
+
         btnEquiparArmadura = EstilosUI.crearBoton("Equipar", new Color(39, 174, 96), new Color(46, 204, 113));
+        btnEquiparArmadura.setFont(new Font("Segoe UI", Font.BOLD, 11));
+        btnEquiparArmadura.setPreferredSize(new Dimension(80, 26));
+
         btnDesequiparArmadura = EstilosUI.crearBoton("Desequipar", new Color(140, 40, 40), new Color(192, 57, 43));
+        btnDesequiparArmadura.setFont(new Font("Segoe UI", Font.BOLD, 11));
+        btnDesequiparArmadura.setPreferredSize(new Dimension(95, 26));
+
         JPanel btnArmaduras = new JPanel(new FlowLayout(FlowLayout.RIGHT, 4, 0));
         btnArmaduras.setOpaque(false);
         btnArmaduras.add(btnEquiparArmadura);

@@ -19,7 +19,7 @@ public class Party implements Serializable {
     public Party() {
         this.miembros = new ArrayList<>();
         this.inventario = new Inventario();
-        this.oro = 50; // Oro inicial
+        this.oro = 20; // Oro inicial balanceado
     }
 
     public boolean agregarMiembro(Personaje personaje) {

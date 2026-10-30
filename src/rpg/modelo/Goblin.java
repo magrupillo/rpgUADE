@@ -7,7 +7,7 @@ public class Goblin extends Enemigo {
     private static final long serialVersionUID = 1L;
 
     public Goblin(String nombre) {
-        super(nombre, 150, 24, 10, 18, 45, 25);
+        super(nombre, 150, 24, 10, 18, 45, 10);
     }
 
     public Goblin() {

@@ -110,6 +110,7 @@ public class Mapa implements Serializable {
         Random rnd = new Random();
         int idCounter = 0;
         this.totalColumnas = 7;
+        this.kioscoCreadoEnPiso = false;
 
         List<List<Nodo>> capas = new ArrayList<>();
 
@@ -152,7 +153,11 @@ public class Mapa implements Serializable {
 
         // Capa 6: Jefe de Piso
         List<Nodo> capaJefe = new ArrayList<>();
-        String nombreJefe = (numeroPiso >= 3) ? "Bowser (Amo de la Torre)" : (numeroPiso == 2 ? "Bowser Jr." : "Bowser (Guardián Infernal)");
+        String nombreJefe = switch (numeroPiso) {
+            case 1 -> "Dr. Eggman (Científico Loco)";
+            case 2 -> "Darth Vader (Lord Oscuro)";
+            default -> "Bowser (Amo Supremo de la Torre)";
+        };
         Nodo jefe = new NodoJefe(idCounter++, 6, nombreJefe);
         nodos.put(jefe.getId(), jefe);
         capaJefe.add(jefe);
@@ -199,6 +204,8 @@ public class Mapa implements Serializable {
         }
     }
 
+    private boolean kioscoCreadoEnPiso = false;
+
     private Nodo crearNodoProcedural(int id, int columna, int lane, int totalLanes, Random rnd, int piso) {
         int roll = rnd.nextInt(100);
 
@@ -206,18 +213,20 @@ public class Mapa implements Serializable {
             if (roll < 65) return new NodoCombate(id, columna, nombreCombate(rnd));
             else return new NodoEvento(id, columna, nombreEvento(rnd), EventoAleatorio.crearAleatorio(rnd));
         } else if (columna == 2) {
-            if (lane == 0) return new NodoKiosco(id, columna, "Kiosco de Don Tito");
+            // Exactamente un Kiosco por piso en la columna 2
+            if (!kioscoCreadoEnPiso && lane == 0) {
+                kioscoCreadoEnPiso = true;
+                return new NodoKiosco(id, columna, "Kiosco de Don Tito");
+            }
             if (roll < 45) return new NodoCombate(id, columna, nombreCombate(rnd));
             else if (roll < 80) return new NodoEvento(id, columna, nombreEvento(rnd), EventoAleatorio.crearAleatorio(rnd));
             else return new NodoElite(id, columna, nombreElite(rnd));
         } else if (columna == 3) {
             if (lane == 0) return new NodoFogata(id, columna, nombreFogon(rnd));
-            if (lane == 1) return new NodoKiosco(id, columna, "Kiosco 24hs Don Tito");
             if (roll < 45) return new NodoCombate(id, columna, nombreCombate(rnd));
             else if (roll < 75) return new NodoEvento(id, columna, nombreEvento(rnd), EventoAleatorio.crearAleatorio(rnd));
             else return new NodoElite(id, columna, nombreElite(rnd));
         } else {
-            if (lane == 0) return new NodoKiosco(id, columna, "Kiosco Don Tito (Antesala)");
             if (roll < 45) return new NodoElite(id, columna, nombreElite(rnd));
             else if (roll < 75) return new NodoCombate(id, columna, nombreCombate(rnd));
             else return new NodoEvento(id, columna, nombreEvento(rnd), EventoAleatorio.crearAleatorio(rnd));

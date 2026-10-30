@@ -7,7 +7,7 @@ public class Chaman extends Enemigo {
     private static final long serialVersionUID = 1L;
 
     public Chaman(String nombre) {
-        super(nombre, 170, 26, 12, 15, 65, 35);
+        super(nombre, 170, 26, 12, 15, 65, 15);
     }
 
     public Chaman() {

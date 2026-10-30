@@ -273,7 +273,8 @@ public class PantallaResultados extends JPanel {
                 BorderFactory.createLineBorder(EstilosUI.COLOR_ORO, 2, true),
                 BorderFactory.createEmptyBorder(18, 25, 18, 25)
         ));
-        pnlResumen.setMaximumSize(new Dimension(650, 260));
+        pnlResumen.setMaximumSize(new Dimension(680, 320));
+        pnlResumen.setPreferredSize(new Dimension(680, 320));
 
         JLabel lblTitResumen = new JLabel("RESUMEN COMPLETO DE LA RUN", SwingConstants.CENTER);
         lblTitResumen.setFont(new Font("Segoe UI", Font.BOLD, 18));
@@ -290,21 +291,48 @@ public class PantallaResultados extends JPanel {
         agregarFilaResumen(pnlResumen, "Oro Total Acumulado en la Run:", "$" + juego.getTotalOroAcumulado(), EstilosUI.COLOR_ORO);
 
         pnlResumen.add(Box.createVerticalStrut(10));
-        JLabel lblHeroesTit = new JLabel("Estado final de la Party:", SwingConstants.CENTER);
+        JLabel lblHeroesTit = new JLabel("Estado Final de la Party:", SwingConstants.CENTER);
         lblHeroesTit.setFont(new Font("Segoe UI", Font.BOLD, 12));
         lblHeroesTit.setForeground(EstilosUI.TEXTO_MUTED);
         lblHeroesTit.setAlignmentX(Component.CENTER_ALIGNMENT);
         pnlResumen.add(lblHeroesTit);
+        pnlResumen.add(Box.createVerticalStrut(4));
 
-        StringBuilder sb = new StringBuilder();
+        java.util.List<Personaje> vivos = new java.util.ArrayList<>();
+        java.util.List<Personaje> caidos = new java.util.ArrayList<>();
         for (Personaje p : juego.getParty().getMiembros()) {
-            sb.append(p.getNombre()).append(" (Nv.").append(p.getNivel()).append(" ").append(p.getTipo()).append(")  •  ");
+            if (p.estaVivo()) vivos.add(p);
+            else caidos.add(p);
         }
-        JLabel lblPartyFinal = new JLabel(sb.toString(), SwingConstants.CENTER);
-        lblPartyFinal.setFont(new Font("Segoe UI", Font.PLAIN, 12));
-        lblPartyFinal.setForeground(EstilosUI.TEXTO_CLARO);
-        lblPartyFinal.setAlignmentX(Component.CENTER_ALIGNMENT);
-        pnlResumen.add(lblPartyFinal);
+
+        if (!vivos.isEmpty()) {
+            StringBuilder sbV = new StringBuilder("<html><center><b>Héroes Supervivientes:</b> ");
+            for (Personaje p : vivos) {
+                sbV.append(p.getNombre()).append(" (Nv.").append(p.getNivel()).append(" - ").append(p.getVida()).append("/").append(p.getVidaMaxima()).append(" HP), ");
+            }
+            sbV.setLength(sbV.length() - 2);
+            sbV.append("</center></html>");
+            JLabel lblV = new JLabel(sbV.toString(), SwingConstants.CENTER);
+            lblV.setFont(new Font("Segoe UI", Font.PLAIN, 12));
+            lblV.setForeground(new Color(46, 204, 113));
+            lblV.setAlignmentX(Component.CENTER_ALIGNMENT);
+            pnlResumen.add(lblV);
+            pnlResumen.add(Box.createVerticalStrut(4));
+        }
+
+        if (!caidos.isEmpty()) {
+            StringBuilder sbC = new StringBuilder("<html><center><b>Héroes Caídos en Combate:</b> ");
+            for (Personaje p : caidos) {
+                sbC.append(p.getNombre()).append(" (CAÍDO en Nv.").append(p.getNivel()).append("), ");
+            }
+            sbC.setLength(sbC.length() - 2);
+            sbC.append("</center></html>");
+            JLabel lblC = new JLabel(sbC.toString(), SwingConstants.CENTER);
+            lblC.setFont(new Font("Segoe UI", Font.BOLD, 12));
+            lblC.setForeground(new Color(231, 76, 60));
+            lblC.setAlignmentX(Component.CENTER_ALIGNMENT);
+            pnlResumen.add(lblC);
+        }
 
         panelHeroesCards.setLayout(new GridBagLayout());
         panelHeroesCards.add(pnlResumen);

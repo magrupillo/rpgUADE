@@ -75,6 +75,10 @@ public class PantallaBatalla extends JFrame {
         panelAcciones = new PanelAcciones();
         panelRegistro = new PanelRegistro();
 
+        // Conectar selección de objetivo por clic sobre sprite y sincronizar con panel de acciones
+        panelEscena.setOnObjetivoClick(panelAcciones::toggleSeleccionObjetivo);
+        panelAcciones.setListenerObjetivoCambiado(panelEscena::setObjetivoSeleccionado);
+
         // Escena de batalla arriba en el centro
         panelCombateCompleto.add(panelEscena, BorderLayout.CENTER);
 

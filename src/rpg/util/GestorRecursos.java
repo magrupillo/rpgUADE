@@ -128,6 +128,14 @@ public class GestorRecursos {
         if (normalizado.contains("skeletor") || normalizado.contains("esqueleto")) {
             if (!nombres.contains("esqueleto")) nombres.add("esqueleto");
         }
+        if (normalizado.contains("eggman") || normalizado.contains("jefe2") || normalizado.contains("robotnik")) {
+            if (!nombres.contains("jefe2")) nombres.add("jefe2");
+            if (!nombres.contains("eggman")) nombres.add("eggman");
+        }
+        if (normalizado.contains("vader") || normalizado.contains("darth") || normalizado.contains("jefe3")) {
+            if (!nombres.contains("jefe3")) nombres.add("jefe3");
+            if (!nombres.contains("vader")) nombres.add("vader");
+        }
         if (normalizado.contains("bowser") || normalizado.contains("jefe") || normalizado.contains("dragon")) {
             if (!nombres.contains("jefe")) nombres.add("jefe");
             if (!nombres.contains("bowser")) nombres.add("bowser");

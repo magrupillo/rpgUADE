@@ -12,7 +12,7 @@ public class Esqueleto extends Enemigo {
     private final Random random = new Random();
 
     public Esqueleto(String nombre) {
-        super(nombre, 190, 28, 13, 13, 60, 35);
+        super(nombre, 190, 28, 13, 13, 60, 14);
     }
 
     public Esqueleto() {

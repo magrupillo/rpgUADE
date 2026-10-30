@@ -23,12 +23,12 @@ public class PantallaEvento extends JPanel {
 
         JPanel panelCentral = new JPanel();
         panelCentral.setLayout(new BoxLayout(panelCentral, BoxLayout.Y_AXIS));
-        panelCentral.setBackground(EstilosUI.FONDO_PANEL);
+        panelCentral.setBackground(new Color(24, 28, 40)); // Sólido para evitar ghosting
         panelCentral.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createLineBorder(EstilosUI.COLOR_ORO, 2, true),
-                BorderFactory.createEmptyBorder(25, 35, 25, 35)
+                BorderFactory.createEmptyBorder(22, 30, 22, 30)
         ));
-        panelCentral.setPreferredSize(new Dimension(650, 480));
+        panelCentral.setPreferredSize(new Dimension(750, 560));
 
         lblTitulo = new JLabel("EVENTO EN EL CAMINO", SwingConstants.CENTER);
         lblTitulo.setFont(EstilosUI.FUENTE_TITULO);
@@ -36,7 +36,7 @@ public class PantallaEvento extends JPanel {
         lblTitulo.setAlignmentX(Component.CENTER_ALIGNMENT);
         panelCentral.add(lblTitulo);
 
-        panelCentral.add(Box.createVerticalStrut(15));
+        panelCentral.add(Box.createVerticalStrut(14));
 
         txtDescripcion = new JTextArea();
         txtDescripcion.setEditable(false);
@@ -45,32 +45,36 @@ public class PantallaEvento extends JPanel {
         txtDescripcion.setFont(new Font("Segoe UI", Font.PLAIN, 14));
         txtDescripcion.setForeground(EstilosUI.TEXTO_CLARO);
         txtDescripcion.setBackground(EstilosUI.FONDO_LOG);
-        txtDescripcion.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(EstilosUI.BORDE_SUAVE, 1),
-                BorderFactory.createEmptyBorder(12, 12, 12, 12)
-        ));
-        txtDescripcion.setMaximumSize(new Dimension(600, 180));
-        panelCentral.add(txtDescripcion);
+        txtDescripcion.setBorder(BorderFactory.createEmptyBorder(12, 14, 12, 14));
 
-        panelCentral.add(Box.createVerticalStrut(20));
+        JScrollPane scrollDesc = new JScrollPane(txtDescripcion);
+        scrollDesc.setBorder(BorderFactory.createLineBorder(EstilosUI.BORDE_SUAVE, 1));
+        scrollDesc.setPreferredSize(new Dimension(680, 200));
+        scrollDesc.setMaximumSize(new Dimension(680, 200));
+        scrollDesc.setAlignmentX(Component.CENTER_ALIGNMENT);
+        panelCentral.add(scrollDesc);
 
-        btnOpcionA = EstilosUI.crearBoton("Opcion 1", new Color(142, 68, 173), new Color(155, 89, 182));
-        btnOpcionA.setFont(new Font("Segoe UI", Font.BOLD, 13));
-        btnOpcionA.setMaximumSize(new Dimension(580, 42));
+        panelCentral.add(Box.createVerticalStrut(18));
+
+        btnOpcionA = EstilosUI.crearBoton("Opción 1", new Color(142, 68, 173), new Color(155, 89, 182));
+        btnOpcionA.setFont(new Font("Segoe UI", Font.BOLD, 12));
+        btnOpcionA.setPreferredSize(new Dimension(680, 52));
+        btnOpcionA.setMaximumSize(new Dimension(680, 52));
         btnOpcionA.setAlignmentX(Component.CENTER_ALIGNMENT);
         btnOpcionA.addActionListener(e -> resolver(1));
         panelCentral.add(btnOpcionA);
 
         panelCentral.add(Box.createVerticalStrut(10));
 
-        btnOpcionB = EstilosUI.crearBoton("Opcion 2", new Color(52, 73, 94), new Color(70, 95, 120));
-        btnOpcionB.setFont(new Font("Segoe UI", Font.BOLD, 13));
-        btnOpcionB.setMaximumSize(new Dimension(580, 42));
+        btnOpcionB = EstilosUI.crearBoton("Opción 2", new Color(52, 73, 94), new Color(70, 95, 120));
+        btnOpcionB.setFont(new Font("Segoe UI", Font.BOLD, 12));
+        btnOpcionB.setPreferredSize(new Dimension(680, 52));
+        btnOpcionB.setMaximumSize(new Dimension(680, 52));
         btnOpcionB.setAlignmentX(Component.CENTER_ALIGNMENT);
         btnOpcionB.addActionListener(e -> resolver(2));
         panelCentral.add(btnOpcionB);
 
-        panelCentral.add(Box.createVerticalStrut(15));
+        panelCentral.add(Box.createVerticalStrut(14));
 
         lblResultado = new JLabel("", SwingConstants.CENTER);
         lblResultado.setFont(EstilosUI.FUENTE_BOLD);
@@ -113,8 +117,10 @@ public class PantallaEvento extends JPanel {
     public void actualizar(EventoDTO dto) {
         lblTitulo.setText(dto.getTitulo());
         txtDescripcion.setText(dto.getDescripcion());
-        btnOpcionA.setText("1. " + dto.getOpcionA());
-        btnOpcionB.setText("2. " + dto.getOpcionB());
+        txtDescripcion.setCaretPosition(0);
+
+        btnOpcionA.setText("<html><center>1. " + dto.getOpcionA() + "</center></html>");
+        btnOpcionB.setText("<html><center>2. " + dto.getOpcionB() + "</center></html>");
 
         btnOpcionA.setVisible(true);
         btnOpcionB.setVisible(true);

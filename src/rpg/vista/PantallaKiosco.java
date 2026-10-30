@@ -63,7 +63,7 @@ public class PantallaKiosco extends JPanel {
         // --- Panel Comprar ---
         JPanel pnlComprar = new JPanel();
         pnlComprar.setLayout(new BoxLayout(pnlComprar, BoxLayout.Y_AXIS));
-        pnlComprar.setBackground(new Color(24, 28, 40, 220));
+        pnlComprar.setBackground(new Color(24, 28, 40));
         pnlComprar.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createTitledBorder(
                         BorderFactory.createLineBorder(new Color(39, 174, 96), 1, true),
@@ -106,7 +106,7 @@ public class PantallaKiosco extends JPanel {
         // --- Panel Vender ---
         JPanel pnlVender = new JPanel();
         pnlVender.setLayout(new BoxLayout(pnlVender, BoxLayout.Y_AXIS));
-        pnlVender.setBackground(new Color(24, 28, 40, 220));
+        pnlVender.setBackground(new Color(24, 28, 40));
         pnlVender.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createTitledBorder(
                         BorderFactory.createLineBorder(new Color(230, 126, 34), 1, true),

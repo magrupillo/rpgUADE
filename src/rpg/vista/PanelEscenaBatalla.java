@@ -98,7 +98,23 @@ public class PanelEscenaBatalla extends JPanel {
         add(panelCombate, BorderLayout.CENTER);
     }
 
+    private int objetivoSeleccionadoIdx = -1;
+    private java.util.function.Consumer<Integer> onObjetivoClick;
+    private EstadoBatallaDTO ultimoEstado;
+
+    public void setOnObjetivoClick(java.util.function.Consumer<Integer> listener) {
+        this.onObjetivoClick = listener;
+    }
+
+    public void setObjetivoSeleccionado(int idx) {
+        this.objetivoSeleccionadoIdx = idx;
+        if (ultimoEstado != null) {
+            actualizar(ultimoEstado);
+        }
+    }
+
     public void actualizar(EstadoBatallaDTO estadoDTO) {
+        this.ultimoEstado = estadoDTO;
         lblLugar.setText(estadoDTO.getLugar());
         lblRonda.setText("Ronda " + estadoDTO.getRondaActual() + "   •   " + estadoDTO.getTurnoActual());
 
@@ -114,10 +130,18 @@ public class PanelEscenaBatalla extends JPanel {
             panelHeroes.add(new PanelSprite(h, esTurno));
         }
 
-        // Enemigos
+        // Enemigos interactivos: clic sobre el sprite selecciona/deselecciona objetivo
         panelEnemigos.removeAll();
-        for (EntidadDTO e : estadoDTO.getEnemigos()) {
-            panelEnemigos.add(new PanelSprite(e, false));
+        List<EntidadDTO> enemigos = estadoDTO.getEnemigos();
+        for (int i = 0; i < enemigos.size(); i++) {
+            final int enemyIdx = i;
+            EntidadDTO e = enemigos.get(i);
+            boolean esObj = (enemyIdx == objetivoSeleccionadoIdx);
+            panelEnemigos.add(new PanelSprite(e, false, esObj, () -> {
+                if (onObjetivoClick != null) {
+                    onObjetivoClick.accept(enemyIdx);
+                }
+            }));
         }
 
         panelHeroes.revalidate();

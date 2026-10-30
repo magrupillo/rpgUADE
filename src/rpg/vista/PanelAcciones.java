@@ -12,22 +12,24 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
 /**
- * Panel de comandos de combate.
- * Muestra el héroe activo en turno con su sprite y estadísticas, selectores claros y botones
- * con descripciones tácticas explícitas sin emojis rotos.
+ * Panel de comandos de combate táctico.
+ * Contiene botones dedicados directos para las 3 habilidades por personaje (con bloqueo visual si no están aprendidas),
+ * selección de objetivo sincronizada por clic sobre los sprites, y uso rápido de consumibles.
  */
 public class PanelAcciones extends JPanel {
 
     private ControladorBatalla controlador;
 
-    private final JComboBox<String> comboHabilidades;
     private final JComboBox<String> comboObjetivos;
     private final JComboBox<String> comboItems;
 
     private final JButton btnAtacar;
-    private final JButton btnHabilidad;
+    private final JButton btnHab1;
+    private final JButton btnHab2;
+    private final JButton btnHab3;
     private final JButton btnUsarItem;
     private final JButton btnDefender;
     private final JButton btnContinuar;
@@ -42,6 +44,9 @@ public class PanelAcciones extends JPanel {
     private final List<Integer> indicesItemsDisponibles = new ArrayList<>();
     private EstadoBatallaDTO estadoActual;
 
+    private int enemigoSeleccionadoIdx = -1; // -1 significa por defecto / área
+    private Consumer<Integer> listenerObjetivoCambiado;
+
     public PanelAcciones() {
         setLayout(new BorderLayout(6, 4));
         setBackground(EstilosUI.FONDO_PANEL);
@@ -54,41 +59,45 @@ public class PanelAcciones extends JPanel {
         JPanel panelInfoHeroe = crearPanelInfoHeroe();
         add(panelInfoHeroe, BorderLayout.WEST);
 
-        // ── Panel central: Selectores + Botones ──────────────────────────────────
+        // ── Panel central: Selectores + Botones Directos de Habilidad ─────────────
         JPanel panelCentral = new JPanel(new BorderLayout(4, 4));
         panelCentral.setOpaque(false);
 
-        // Fila de selectores
-        JPanel panelSelectores = new JPanel(new GridLayout(1, 3, 10, 0));
+        // Fila Superior: Selectores de Objetivo y Consumible
+        JPanel panelSelectores = new JPanel(new GridLayout(1, 2, 10, 0));
         panelSelectores.setOpaque(false);
-        panelSelectores.add(crearSelector("Objetivo:", comboObjetivos = new JComboBox<>(), new Color(192, 57, 43)));
-        panelSelectores.add(crearSelector("Habilidad:", comboHabilidades = new JComboBox<>(), new Color(155, 89, 182)));
-        panelSelectores.add(crearSelector("Consumible:", comboItems = new JComboBox<>(), new Color(39, 174, 96)));
+        panelSelectores.add(crearSelector("Objetivo (Clic en enemigo o elegir):", comboObjetivos = new JComboBox<>(), new Color(192, 57, 43)));
+        panelSelectores.add(crearSelector("Consumible del Inventario:", comboItems = new JComboBox<>(), new Color(39, 174, 96)));
         panelCentral.add(panelSelectores, BorderLayout.NORTH);
 
-        // Fila de botones de acción
-        JPanel panelBotones = new JPanel(new FlowLayout(FlowLayout.CENTER, 8, 2));
+        // Fila Inferior: Botones de Acción Táctica
+        JPanel panelBotones = new JPanel(new FlowLayout(FlowLayout.CENTER, 6, 2));
         panelBotones.setOpaque(false);
 
         btnAtacar = crearBotonAccion("ATACAR",
                 "Ataque físico básico contra el objetivo seleccionado",
-                new Color(180, 50, 35), new Color(220, 70, 50));
-        btnHabilidad = crearBotonAccion("HABILIDAD",
-                "Usar la técnica seleccionada (consume Maná/Ki)",
-                new Color(120, 55, 165), new Color(145, 80, 190));
-        btnUsarItem = crearBotonAccion("USAR ÍTEM",
-                "Consumir la poción seleccionada del inventario compartido",
-                new Color(30, 155, 80), new Color(40, 195, 105));
+                new Color(180, 50, 35), new Color(220, 70, 50), 95);
+
+        btnHab1 = crearBotonAccion("Hab 1", "Habilidad táctica 1", new Color(120, 55, 165), new Color(145, 80, 190), 135);
+        btnHab2 = crearBotonAccion("Hab 2", "Habilidad táctica 2", new Color(120, 55, 165), new Color(145, 80, 190), 135);
+        btnHab3 = crearBotonAccion("Hab 3", "Habilidad táctica 3", new Color(120, 55, 165), new Color(145, 80, 190), 135);
+
+        btnUsarItem = crearBotonAccion("POCIÓN",
+                "Consumir la poción seleccionada del inventario",
+                new Color(30, 155, 80), new Color(40, 195, 105), 105);
+
         btnDefender = crearBotonAccion("DEFENDER",
                 "Postura defensiva: +100% DEF y regenera 10% MP/Ki hasta tu próximo turno",
-                new Color(30, 100, 165), new Color(45, 135, 210));
+                new Color(30, 100, 165), new Color(45, 135, 210), 100);
 
         btnContinuar = EstilosUI.crearBoton("CONTINUAR", new Color(39, 174, 96), new Color(46, 204, 113));
         btnContinuar.setFont(new Font("Segoe UI", Font.BOLD, 14));
         btnContinuar.setVisible(false);
 
         panelBotones.add(btnAtacar);
-        panelBotones.add(btnHabilidad);
+        panelBotones.add(btnHab1);
+        panelBotones.add(btnHab2);
+        panelBotones.add(btnHab3);
         panelBotones.add(btnUsarItem);
         panelBotones.add(btnDefender);
         panelBotones.add(btnContinuar);
@@ -102,7 +111,7 @@ public class PanelAcciones extends JPanel {
     private JPanel crearPanelInfoHeroe() {
         JPanel p = new JPanel(new FlowLayout(FlowLayout.LEFT, 8, 2));
         p.setOpaque(false);
-        p.setPreferredSize(new Dimension(300, 95));
+        p.setPreferredSize(new Dimension(280, 95));
 
         lblSpriteHeroe = new JLabel();
         lblSpriteHeroe.setPreferredSize(new Dimension(54, 54));
@@ -153,11 +162,11 @@ public class PanelAcciones extends JPanel {
         return p;
     }
 
-    private JButton crearBotonAccion(String texto, String tooltip, Color base, Color hover) {
+    private JButton crearBotonAccion(String texto, String tooltip, Color base, Color hover, int ancho) {
         JButton btn = EstilosUI.crearBoton(texto, base, hover);
-        btn.setFont(new Font("Segoe UI", Font.BOLD, 12));
+        btn.setFont(new Font("Segoe UI", Font.BOLD, 11));
         btn.setToolTipText(tooltip);
-        btn.setPreferredSize(new Dimension(135, 34));
+        btn.setPreferredSize(new Dimension(ancho, 34));
         return btn;
     }
 
@@ -165,17 +174,12 @@ public class PanelAcciones extends JPanel {
         btnAtacar.addActionListener(e -> {
             if (controlador == null || estadoActual == null) return;
             int idxObj = obtenerIndiceObjetivoSeleccionado();
-            if (idxObj < 0) return;
-            controlador.atacar(estadoActual.getIndiceHeroeActivo(), idxObj);
+            controlador.atacar(estadoActual.getIndiceHeroeActivo(), Math.max(0, idxObj));
         });
 
-        btnHabilidad.addActionListener(e -> {
-            if (controlador == null || estadoActual == null) return;
-            int idxHab = comboHabilidades.getSelectedIndex();
-            if (idxHab < 0) return;
-            int idxObj = obtenerIndiceObjetivoSeleccionado();
-            controlador.usarHabilidad(estadoActual.getIndiceHeroeActivo(), idxHab, Math.max(0, idxObj));
-        });
+        btnHab1.addActionListener(e -> ejecutarHabilidadDirecta(0));
+        btnHab2.addActionListener(e -> ejecutarHabilidadDirecta(1));
+        btnHab3.addActionListener(e -> ejecutarHabilidadDirecta(2));
 
         btnUsarItem.addActionListener(e -> {
             if (controlador == null || estadoActual == null) return;
@@ -195,14 +199,55 @@ public class PanelAcciones extends JPanel {
                 controlador.procesarFinDeCombate(estadoActual.isVictoria());
             }
         });
+
+        comboObjetivos.addActionListener(e -> {
+            int sel = comboObjetivos.getSelectedIndex();
+            if (sel <= 0) {
+                enemigoSeleccionadoIdx = -1;
+            } else if (sel - 1 < indicesEnemigosVivos.size()) {
+                enemigoSeleccionadoIdx = indicesEnemigosVivos.get(sel - 1);
+            }
+            if (listenerObjetivoCambiado != null) {
+                listenerObjetivoCambiado.accept(enemigoSeleccionadoIdx);
+            }
+        });
+    }
+
+    private void ejecutarHabilidadDirecta(int indiceHabilidad) {
+        if (controlador == null || estadoActual == null) return;
+        int idxObj = obtenerIndiceObjetivoSeleccionado();
+        controlador.usarHabilidad(estadoActual.getIndiceHeroeActivo(), indiceHabilidad, Math.max(0, idxObj));
+    }
+
+    public void setListenerObjetivoCambiado(Consumer<Integer> listener) {
+        this.listenerObjetivoCambiado = listener;
+    }
+
+    public void toggleSeleccionObjetivo(int idxEnemigo) {
+        if (enemigoSeleccionadoIdx == idxEnemigo) {
+            // Deseleccionar: volver al default (todos / auto)
+            enemigoSeleccionadoIdx = -1;
+            comboObjetivos.setSelectedIndex(0);
+        } else {
+            enemigoSeleccionadoIdx = idxEnemigo;
+            int pos = indicesEnemigosVivos.indexOf(idxEnemigo);
+            if (pos >= 0) {
+                comboObjetivos.setSelectedIndex(pos + 1);
+            }
+        }
+        if (listenerObjetivoCambiado != null) {
+            listenerObjetivoCambiado.accept(enemigoSeleccionadoIdx);
+        }
     }
 
     private int obtenerIndiceObjetivoSeleccionado() {
-        int sel = comboObjetivos.getSelectedIndex();
-        if (sel >= 0 && sel < indicesEnemigosVivos.size()) {
-            return indicesEnemigosVivos.get(sel);
+        if (enemigoSeleccionadoIdx >= 0) {
+            return enemigoSeleccionadoIdx;
         }
-        return -1;
+        if (!indicesEnemigosVivos.isEmpty()) {
+            return indicesEnemigosVivos.get(0);
+        }
+        return 0;
     }
 
     public void setControlador(ControladorBatalla controlador) {
@@ -238,23 +283,32 @@ public class PanelAcciones extends JPanel {
             Image img = GestorRecursos.obtenerSprite(h.getTipo(), 54, 54);
             if (img != null) lblSpriteHeroe.setIcon(new ImageIcon(img));
 
-            // Cargar combo de habilidades
-            comboHabilidades.removeAllItems();
-            for (String hab : h.getHabilidades()) {
-                comboHabilidades.addItem(hab);
-            }
+            // Configurar botones directos para las 3 habilidades
+            configurarBotonHabilidad(btnHab1, h, 0);
+            configurarBotonHabilidad(btnHab2, h, 1);
+            configurarBotonHabilidad(btnHab3, h, 2);
         }
 
         // Cargar objetivos (enemigos vivos)
         comboObjetivos.removeAllItems();
+        comboObjetivos.addItem("★ Todos / Objetivo Automático");
         indicesEnemigosVivos.clear();
         List<EntidadDTO> enemigos = estadoDTO.getEnemigos();
         for (int i = 0; i < enemigos.size(); i++) {
             EntidadDTO e = enemigos.get(i);
             if (e.isEstaVivo()) {
                 indicesEnemigosVivos.add(i);
-                comboObjetivos.addItem(e.getNombre() + " (" + e.getVida() + "/" + e.getVidaMaxima() + " HP)");
+                comboObjetivos.addItem((i + 1) + ". " + e.getNombre() + " (" + e.getVida() + "/" + e.getVidaMaxima() + " HP)");
             }
+        }
+
+        // Mantener selección si el enemigo sigue vivo
+        if (enemigoSeleccionadoIdx >= 0 && indicesEnemigosVivos.contains(enemigoSeleccionadoIdx)) {
+            int pos = indicesEnemigosVivos.indexOf(enemigoSeleccionadoIdx);
+            comboObjetivos.setSelectedIndex(pos + 1);
+        } else {
+            enemigoSeleccionadoIdx = -1;
+            comboObjetivos.setSelectedIndex(0);
         }
 
         // Cargar ítems consumibles disponibles
@@ -269,13 +323,40 @@ public class PanelAcciones extends JPanel {
         btnUsarItem.setEnabled(!indicesItemsDisponibles.isEmpty());
     }
 
+    private void configurarBotonHabilidad(JButton btn, PersonajeDTO h, int slot) {
+        List<String> habs = h.getHabilidades();
+        if (slot < habs.size()) {
+            String textoCompleto = habs.get(slot);
+            String nombreCorto = extraerNombreHabilidad(textoCompleto);
+            btn.setText("<html><center><b>" + nombreCorto + "</b></center></html>");
+            btn.setToolTipText(textoCompleto);
+            btn.setEnabled(true);
+            btn.setBackground(new Color(120, 55, 165));
+        } else {
+            btn.setText("<html><center><font color='#888888'>[Bloqueada]</font></center></html>");
+            btn.setToolTipText("Habilidad aún no aprendida. Se desbloquea al subir de nivel en 'Héroes y Equipo'.");
+            btn.setEnabled(false);
+            btn.setBackground(new Color(45, 50, 65));
+        }
+    }
+
+    private String extraerNombreHabilidad(String desc) {
+        if (desc == null) return "Habilidad";
+        int idxParentesis = desc.indexOf("(");
+        if (idxParentesis > 0) {
+            return desc.substring(0, idxParentesis).trim();
+        }
+        return desc;
+    }
+
     private void setBotonesAccionHabilitados(boolean hab) {
         btnAtacar.setEnabled(hab);
-        btnHabilidad.setEnabled(hab);
-        btnUsarItem.setEnabled(hab);
+        btnHab1.setEnabled(hab);
+        btnHab2.setEnabled(hab);
+        btnHab3.setEnabled(hab);
+        btnUsarItem.setEnabled(hab && !indicesItemsDisponibles.isEmpty());
         btnDefender.setEnabled(hab);
         comboObjetivos.setEnabled(hab);
-        comboHabilidades.setEnabled(hab);
         comboItems.setEnabled(hab);
     }
 }

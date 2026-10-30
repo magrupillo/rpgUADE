@@ -214,6 +214,7 @@ public class ControladorJuego implements NodoVisitor {
         if (victoria) {
             juego.completarNodoActual();
             RecompensaDTO recompensa = batalla.calcularRecompensa();
+            juego.registrarCombateGanado(recompensa.getOro());
             EstadoBatallaDTO estadoDTO = batalla.crearEstadoDTO();
             vista.actualizarResultados(estadoDTO, recompensa, juego);
         } else {

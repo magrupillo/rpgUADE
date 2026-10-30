@@ -104,7 +104,7 @@ public class PantallaTorre extends JPanel {
         btn.setPreferredSize(new Dimension(560, 65));
         btn.setAlignmentX(Component.CENTER_ALIGNMENT);
         btn.addActionListener(e -> {
-            if (controlador != null && numeroPiso <= pisoMaximoDesbloqueado) {
+            if (controlador != null && numeroPiso == pisoMaximoDesbloqueado) {
                 controlador.entrarPiso(numeroPiso);
             }
         });
@@ -129,16 +129,16 @@ public class PantallaTorre extends JPanel {
             btnGestion.setBackground(new Color(41, 128, 185));
         }
 
-        configurarBotonPiso(btnPiso1, 1, "PISO 1: BASE DE LA TORRE (Entrada)", juego.getPiso());
-        configurarBotonPiso(btnPiso2, 2, "PISO 2: PROFUNDIDADES PELIGROSAS", juego.getPiso());
+        configurarBotonPiso(btnPiso1, 1, "PISO 1: BASE DE LA TORRE (Jefe: Dr. Eggman)", juego.getPiso());
+        configurarBotonPiso(btnPiso2, 2, "PISO 2: PROFUNDIDADES PELIGROSAS (Jefe: Darth Vader)", juego.getPiso());
         configurarBotonPiso(btnPiso3, 3, "PISO 3: CÚSPIDE DE LA TORRE (Jefe Final: Bowser)", juego.getPiso());
     }
 
     private void configurarBotonPiso(JButton btn, int piso, String titulo, int pisoActualJuego) {
         if (piso < pisoMaximoDesbloqueado) {
             btn.setText("✔ " + titulo + " [SUPERADO]");
-            btn.setEnabled(true);
-            btn.setBackground(new Color(39, 174, 96));
+            btn.setEnabled(false); // Bloqueado: no se puede volver a jugar un piso ya ganado
+            btn.setBackground(new Color(35, 75, 45));
         } else if (piso == pisoMaximoDesbloqueado) {
             btn.setText("▶ " + titulo + " [DISPONIBLE]");
             btn.setEnabled(true);

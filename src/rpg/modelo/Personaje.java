@@ -240,6 +240,18 @@ public abstract class Personaje implements Combatiente {
         this.vida = Math.min(vida + cantidad, vidaMaxima);
     }
 
+    public void recibirDanioDirecto(int cantidad) {
+        this.vida = Math.max(1, this.vida - cantidad);
+    }
+
+    public void revivir(int hp) {
+        this.vida = Math.min(Math.max(1, hp), this.vidaMaxima);
+        this.aturdido = false;
+        this.envenenado = false;
+        this.defendiendo = false;
+        RegistroCombate.registrar("¡" + nombre + " ha resucitado de entre los muertos con " + vida + " HP!");
+    }
+
     public void recuperarMana(int cantidad) {
         this.mana = Math.min(mana + cantidad, manaMaximo);
     }

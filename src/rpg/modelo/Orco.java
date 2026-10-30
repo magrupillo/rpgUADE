@@ -7,7 +7,7 @@ public class Orco extends Enemigo {
     private static final long serialVersionUID = 1L;
 
     public Orco(String nombre) {
-        super(nombre, 240, 32, 16, 10, 70, 40);
+        super(nombre, 240, 32, 16, 10, 70, 16);
     }
 
     public Orco() {
