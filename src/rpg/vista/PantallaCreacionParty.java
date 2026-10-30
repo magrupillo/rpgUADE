@@ -3,6 +3,8 @@ package rpg.vista;
 import rpg.controlador.ControladorJuego;
 import rpg.modelo.*;
 import rpg.util.EstilosUI;
+import rpg.util.GestorRecursos;
+import rpg.util.PanelVidrio;
 
 import javax.swing.*;
 import java.awt.*;
@@ -14,7 +16,7 @@ public class PantallaCreacionParty extends JPanel {
 
     public PantallaCreacionParty() {
         setLayout(new BorderLayout(15, 15));
-        setBackground(EstilosUI.FONDO_OSCURO);
+        setOpaque(false);
         setBorder(BorderFactory.createEmptyBorder(20, 25, 20, 25));
 
         // Título
@@ -70,12 +72,9 @@ public class PantallaCreacionParty extends JPanel {
     }
 
     private JPanel crearTarjetaArquetipo(String nombreDefault, String clase, String rol, String mecanica) {
-        JPanel card = new JPanel(new BorderLayout(8, 8));
-        card.setBackground(EstilosUI.FONDO_PANEL);
-        card.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(EstilosUI.BORDE_SUAVE, 1, true),
-                BorderFactory.createEmptyBorder(12, 12, 12, 12)
-        ));
+        PanelVidrio card = new PanelVidrio(18);
+        card.setLayout(new BorderLayout(8, 8));
+        card.setBorder(BorderFactory.createEmptyBorder(14, 14, 14, 14));
 
         // Header
         JPanel pnlHead = new JPanel(new GridLayout(2, 1, 0, 2));
@@ -96,7 +95,7 @@ public class PantallaCreacionParty extends JPanel {
         pnlCentro.setLayout(new BoxLayout(pnlCentro, BoxLayout.Y_AXIS));
         pnlCentro.setOpaque(false);
 
-        JLabel lblIcono = new JLabel(new ImageIcon(rpg.util.GestorRecursos.obtenerSprite(clase, 80, 80)));
+        JLabel lblIcono = new JLabel(new ImageIcon(GestorRecursos.obtenerSprite(clase, 80, 80)));
         lblIcono.setAlignmentX(Component.CENTER_ALIGNMENT);
         pnlCentro.add(lblIcono);
 
@@ -108,7 +107,7 @@ public class PantallaCreacionParty extends JPanel {
         txtMecanica.setLineWrap(true);
         txtMecanica.setFont(new Font("Segoe UI", Font.PLAIN, 11));
         txtMecanica.setForeground(EstilosUI.TEXTO_MUTED);
-        txtMecanica.setBackground(EstilosUI.FONDO_PANEL);
+        txtMecanica.setOpaque(false);
         pnlCentro.add(txtMecanica);
 
         card.add(pnlCentro, BorderLayout.CENTER);
@@ -163,5 +162,22 @@ public class PantallaCreacionParty extends JPanel {
         inv.equiparArmadura(cotaMallas, arthur);
 
         return party;
+    }
+
+    @Override
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        Graphics2D g2 = (Graphics2D) g.create();
+        Image fondo = GestorRecursos.obtenerFondo("otro");
+        if (fondo != null) {
+            g2.drawImage(fondo, 0, 0, getWidth(), getHeight(), this);
+            g2.setColor(new Color(15, 18, 25, 205));
+            g2.fillRect(0, 0, getWidth(), getHeight());
+        } else {
+            g2.setColor(EstilosUI.FONDO_OSCURO);
+            g2.fillRect(0, 0, getWidth(), getHeight());
+        }
+        EstilosUI.pintarVineta(g2, getWidth(), getHeight(), 190);
+        g2.dispose();
     }
 }

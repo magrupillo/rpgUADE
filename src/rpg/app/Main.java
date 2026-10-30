@@ -20,6 +20,8 @@ public class Main {
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
             try {
+                // Paleta oscura de fantasía aplicada a Nimbus (diálogos, combos, tooltips)
+                rpg.util.EstilosUI.aplicarTemaOscuro();
                 // Look and Feel moderno del sistema o Nimbus
                 for (UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
                     if ("Nimbus".equals(info.getName())) {

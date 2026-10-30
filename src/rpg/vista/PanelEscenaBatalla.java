@@ -156,12 +156,13 @@ public class PanelEscenaBatalla extends JPanel {
         Graphics2D g2 = (Graphics2D) g.create();
         if (fondoBatalla != null) {
             g2.drawImage(fondoBatalla, 0, 0, getWidth(), getHeight(), this);
-            g2.setColor(new Color(14, 16, 22, 195));
+            g2.setColor(new Color(14, 16, 22, 180));
             g2.fillRect(0, 0, getWidth(), getHeight());
         } else {
             g2.setColor(EstilosUI.FONDO_PANEL);
             g2.fillRect(0, 0, getWidth(), getHeight());
         }
+        EstilosUI.pintarVineta(g2, getWidth(), getHeight(), 190);
         g2.dispose();
     }
 
@@ -174,7 +175,7 @@ public class PanelEscenaBatalla extends JPanel {
 
         PanelColaIniciativa() {
             setOpaque(false);
-            setLayout(new FlowLayout(FlowLayout.CENTER, 4, 2));
+            setLayout(new FlowLayout(FlowLayout.CENTER, 5, 2));
             setPreferredSize(new Dimension(0, 36));
         }
 
@@ -185,7 +186,7 @@ public class PanelEscenaBatalla extends JPanel {
 
             JLabel lblIni = new JLabel("Iniciativa: ");
             lblIni.setFont(new Font("Segoe UI", Font.BOLD, 11));
-            lblIni.setForeground(EstilosUI.TEXTO_MUTED);
+            lblIni.setForeground(EstilosUI.COLOR_ORO);
             add(lblIni);
 
             for (int i = 0; i < cola.size(); i++) {
@@ -197,13 +198,30 @@ public class PanelEscenaBatalla extends JPanel {
 
                 boolean esTurnoActivo = (i == posActual);
 
-                JPanel ficha = new JPanel(new FlowLayout(FlowLayout.CENTER, 4, 1));
-                Color colorBase = esHeroe ? new Color(41, 128, 185) : new Color(192, 57, 43);
-                ficha.setBackground(esTurnoActivo ? new Color(241, 196, 15) : colorBase);
-                ficha.setBorder(BorderFactory.createCompoundBorder(
-                        BorderFactory.createLineBorder(esTurnoActivo ? Color.WHITE : colorBase.darker(), 1, true),
-                        BorderFactory.createEmptyBorder(1, 6, 1, 6)
-                ));
+                Color base = esHeroe ? new Color(36, 110, 165) : new Color(175, 45, 35);
+                Color colorFondo = esTurnoActivo ? new Color(241, 196, 15) : base;
+
+                JPanel ficha = new JPanel(new FlowLayout(FlowLayout.CENTER, 6, 2)) {
+                    @Override
+                    protected void paintComponent(Graphics g) {
+                        Graphics2D g2 = (Graphics2D) g.create();
+                        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                        g2.setColor(colorFondo);
+                        g2.fillRoundRect(0, 0, getWidth(), getHeight(), 10, 10);
+                        if (esTurnoActivo) {
+                            g2.setColor(Color.WHITE);
+                            g2.setStroke(new BasicStroke(1.5f));
+                            g2.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, 10, 10);
+                        } else {
+                            g2.setColor(new Color(255, 255, 255, 40));
+                            g2.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, 10, 10);
+                        }
+                        g2.dispose();
+                        super.paintComponent(g);
+                    }
+                };
+                ficha.setOpaque(false);
+                ficha.setBorder(BorderFactory.createEmptyBorder(1, 8, 1, 8));
 
                 JLabel lblNombre = new JLabel((i + 1) + ". " + nombre + " (" + vel + ")");
                 lblNombre.setFont(new Font("Segoe UI", esTurnoActivo ? Font.BOLD : Font.PLAIN, 10));

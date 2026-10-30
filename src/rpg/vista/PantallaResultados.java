@@ -57,7 +57,7 @@ public class PantallaResultados extends JPanel {
         pnlCentro.setLayout(new BoxLayout(pnlCentro, BoxLayout.Y_AXIS));
         pnlCentro.setOpaque(false);
 
-        panelRecompensas = new JPanel(new FlowLayout(FlowLayout.CENTER, 25, 6));
+        panelRecompensas = new rpg.util.PanelVidrio(new FlowLayout(FlowLayout.CENTER, 25, 6));
         panelRecompensas.setBackground(new Color(24, 28, 40, 220));
         panelRecompensas.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createLineBorder(EstilosUI.BORDE_SUAVE, 1, true),
@@ -197,7 +197,7 @@ public class PantallaResultados extends JPanel {
     }
 
     private JPanel crearTarjetaHeroeProgreso(PersonajeDTO h) {
-        JPanel card = new JPanel();
+        JPanel card = new rpg.util.PanelVidrio(null);
         card.setLayout(new BoxLayout(card, BoxLayout.Y_AXIS));
         card.setBackground(new Color(26, 30, 42, 220));
         card.setBorder(BorderFactory.createCompoundBorder(
@@ -266,7 +266,7 @@ public class PantallaResultados extends JPanel {
     }
 
     private void mostrarResumenFinalRun(Juego juego) {
-        JPanel pnlResumen = new JPanel();
+        JPanel pnlResumen = new rpg.util.PanelVidrio(null);
         pnlResumen.setLayout(new BoxLayout(pnlResumen, BoxLayout.Y_AXIS));
         pnlResumen.setBackground(new Color(24, 28, 40, 230));
         pnlResumen.setBorder(BorderFactory.createCompoundBorder(

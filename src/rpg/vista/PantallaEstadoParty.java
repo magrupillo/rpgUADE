@@ -508,6 +508,7 @@ public class PantallaEstadoParty extends JPanel {
             g2.setColor(EstilosUI.FONDO_OSCURO);
             g2.fillRect(0, 0, getWidth(), getHeight());
         }
+        EstilosUI.pintarVineta(g2, getWidth(), getHeight(), 190);
         g2.dispose();
     }
 }

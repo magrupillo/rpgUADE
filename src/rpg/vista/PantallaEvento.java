@@ -4,6 +4,7 @@ import rpg.controlador.ControladorJuego;
 import rpg.dto.EventoDTO;
 import rpg.util.EstilosUI;
 import rpg.util.GestorRecursos;
+import rpg.util.PanelVidrio;
 
 import javax.swing.*;
 import java.awt.*;
@@ -21,9 +22,8 @@ public class PantallaEvento extends JPanel {
         setLayout(new GridBagLayout());
         setBackground(EstilosUI.FONDO_OSCURO);
 
-        JPanel panelCentral = new JPanel();
+        PanelVidrio panelCentral = new PanelVidrio(22);
         panelCentral.setLayout(new BoxLayout(panelCentral, BoxLayout.Y_AXIS));
-        panelCentral.setBackground(new Color(24, 28, 40)); // Sólido para evitar ghosting
         panelCentral.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createLineBorder(EstilosUI.COLOR_ORO, 2, true),
                 BorderFactory.createEmptyBorder(22, 30, 22, 30)
@@ -100,14 +100,18 @@ public class PantallaEvento extends JPanel {
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
+        Graphics2D g2 = (Graphics2D) g.create();
         Image fondo = GestorRecursos.obtenerFondo("otro");
         if (fondo != null) {
-            g.drawImage(fondo, 0, 0, getWidth(), getHeight(), this);
-            Graphics2D g2 = (Graphics2D) g.create();
+            g2.drawImage(fondo, 0, 0, getWidth(), getHeight(), this);
             g2.setColor(new Color(15, 18, 25, 205));
             g2.fillRect(0, 0, getWidth(), getHeight());
-            g2.dispose();
+        } else {
+            g2.setColor(EstilosUI.FONDO_OSCURO);
+            g2.fillRect(0, 0, getWidth(), getHeight());
         }
+        EstilosUI.pintarVineta(g2, getWidth(), getHeight(), 190);
+        g2.dispose();
     }
 
     public void setControlador(ControladorJuego controlador) {

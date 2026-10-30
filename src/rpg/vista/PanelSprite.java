@@ -75,6 +75,12 @@ public class PanelSprite extends JPanel {
                 int ix = (w - spriteTam) / 2;
                 int iy = (h - spriteTam) / 2;
 
+                // Sombra de contacto en el piso para asentar al personaje
+                if (entidad.isEstaVivo()) {
+                    g2.setColor(new Color(0, 0, 0, 95));
+                    g2.fillOval(ix + 6, iy + spriteTam - 10, spriteTam - 12, 12);
+                }
+
                 if (!entidad.isEstaVivo()) {
                     Composite original = g2.getComposite();
                     g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.35f));
@@ -173,12 +179,10 @@ public class PanelSprite extends JPanel {
 
         add(Box.createVerticalStrut(4));
 
-        // 3. Barra de Vida
+        // 3. Barra de Vida dinámica con degradé
         int vidaActual = Math.max(0, entidad.getVida());
         int vidaMaxima = Math.max(1, entidad.getVidaMaxima());
-        JProgressBar barraHp = EstilosUI.crearBarra(0, vidaMaxima, new Color(231, 76, 60));
-        barraHp.setValue(vidaActual);
-        barraHp.setString(vidaActual + "/" + vidaMaxima);
+        JProgressBar barraHp = EstilosUI.crearBarraVida(vidaActual, vidaMaxima);
         barraHp.setPreferredSize(new Dimension(spriteTam + 10, 14));
         barraHp.setMaximumSize(new Dimension(spriteTam + 10, 14));
         barraHp.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -189,9 +193,9 @@ public class PanelSprite extends JPanel {
             add(Box.createVerticalStrut(2));
             int manaActual = Math.max(0, entidad.getMana());
             int manaMaximo = Math.max(1, entidad.getManaMaximo());
-            JProgressBar barraMp = EstilosUI.crearBarra(0, manaMaximo, new Color(52, 152, 219));
+            JProgressBar barraMp = EstilosUI.crearBarra(0, manaMaximo, EstilosUI.COLOR_MANA);
             barraMp.setValue(manaActual);
-            barraMp.setString(manaActual + "/" + manaMaximo);
+            barraMp.setString(manaActual + " / " + manaMaximo + " MP");
             barraMp.setPreferredSize(new Dimension(spriteTam + 10, 12));
             barraMp.setMaximumSize(new Dimension(spriteTam + 10, 12));
             barraMp.setAlignmentX(Component.CENTER_ALIGNMENT);

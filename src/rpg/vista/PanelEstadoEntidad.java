@@ -103,12 +103,12 @@ public class PanelEstadoEntidad extends JPanel {
         JPanel barras = new JPanel(new GridLayout(2, 1, 0, 1));
         barras.setOpaque(false);
 
-        JProgressBar barraHp = EstilosUI.crearBarra(0, Math.max(1, h.getVidaMaxima()), EstilosUI.COLOR_VIDA);
-        barraHp.setValue(h.getVidaActual());
-        barraHp.setString("HP " + h.getVidaActual() + "/" + h.getVidaMaxima());
+        JProgressBar barraHp = EstilosUI.crearBarraVida(h.getVidaActual(), Math.max(1, h.getVidaMaxima()));
         barraHp.setPreferredSize(new Dimension(0, 12));
-        if (!h.isEstaVivo()) barraHp.setForeground(Color.GRAY);
-        else if (h.getVidaActual() < h.getVidaMaxima() * 0.3) barraHp.setForeground(EstilosUI.COLOR_VIDA_BAJA);
+        if (!h.isEstaVivo()) {
+            barraHp.setValue(0);
+            barraHp.setString("DERROTADO");
+        }
         barras.add(barraHp);
 
         JProgressBar barraMp = EstilosUI.crearBarra(0, Math.max(1, h.getManaMaximo()), EstilosUI.COLOR_MANA);
@@ -148,11 +148,12 @@ public class PanelEstadoEntidad extends JPanel {
         lblNom.setForeground(e.isEstaVivo() ? EstilosUI.TEXTO_CLARO : EstilosUI.TEXTO_MUTED);
         centro.add(lblNom, BorderLayout.NORTH);
 
-        JProgressBar barraHp = EstilosUI.crearBarra(0, Math.max(1, e.getVidaMaxima()), EstilosUI.COLOR_VIDA_BAJA);
-        barraHp.setValue(e.getVidaActual());
-        barraHp.setString("HP " + e.getVidaActual() + "/" + e.getVidaMaxima());
+        JProgressBar barraHp = EstilosUI.crearBarraVida(e.getVidaActual(), Math.max(1, e.getVidaMaxima()));
         barraHp.setPreferredSize(new Dimension(0, 12));
-        if (!e.isEstaVivo()) { barraHp.setForeground(Color.GRAY); barraHp.setValue(0); }
+        if (!e.isEstaVivo()) {
+            barraHp.setValue(0);
+            barraHp.setString("DERROTADO");
+        }
         centro.add(barraHp, BorderLayout.CENTER);
 
         fila.add(centro, BorderLayout.CENTER);

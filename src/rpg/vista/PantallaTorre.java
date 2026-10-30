@@ -4,6 +4,7 @@ import rpg.controlador.ControladorJuego;
 import rpg.modelo.Juego;
 import rpg.util.EstilosUI;
 import rpg.util.GestorRecursos;
+import rpg.util.PanelVidrio;
 
 import javax.swing.*;
 import java.awt.*;
@@ -58,9 +59,12 @@ public class PantallaTorre extends JPanel {
         add(pnlTop, BorderLayout.NORTH);
 
         // ── Panel Central: Estructura Vertical de la Torre ────────────────────────
-        JPanel pnlCentro = new JPanel();
+        JPanel contenedorCentral = new JPanel(new GridBagLayout());
+        contenedorCentral.setOpaque(false);
+
+        PanelVidrio pnlCentro = new PanelVidrio(22);
         pnlCentro.setLayout(new BoxLayout(pnlCentro, BoxLayout.Y_AXIS));
-        pnlCentro.setOpaque(false);
+        pnlCentro.setBorder(BorderFactory.createEmptyBorder(25, 45, 30, 45));
 
         JLabel lblTit = new JLabel("TORRE DE LA ASCENSIÓN", SwingConstants.CENTER);
         lblTit.setFont(new Font("Segoe UI", Font.BOLD, 26));
@@ -76,25 +80,26 @@ public class PantallaTorre extends JPanel {
         lblSub.setAlignmentX(Component.CENTER_ALIGNMENT);
         pnlCentro.add(lblSub);
 
-        pnlCentro.add(Box.createVerticalStrut(30));
+        pnlCentro.add(Box.createVerticalStrut(26));
 
         // Piso 3 (Cúspide)
         btnPiso3 = crearTarjetaPiso("PISO 3: CÚSPIDE DE LA TORRE", 3);
         pnlCentro.add(btnPiso3);
 
-        pnlCentro.add(Box.createVerticalStrut(18));
+        pnlCentro.add(Box.createVerticalStrut(16));
 
         // Piso 2 (Profundidades)
         btnPiso2 = crearTarjetaPiso("PISO 2: PROFUNDIDADES DE LA TORRE", 2);
         pnlCentro.add(btnPiso2);
 
-        pnlCentro.add(Box.createVerticalStrut(18));
+        pnlCentro.add(Box.createVerticalStrut(16));
 
         // Piso 1 (Base)
         btnPiso1 = crearTarjetaPiso("PISO 1: BASE DE LA TORRE", 1);
         pnlCentro.add(btnPiso1);
 
-        add(pnlCentro, BorderLayout.CENTER);
+        contenedorCentral.add(pnlCentro);
+        add(contenedorCentral, BorderLayout.CENTER);
     }
 
     private JButton crearTarjetaPiso(String texto, int numeroPiso) {
@@ -162,6 +167,7 @@ public class PantallaTorre extends JPanel {
             g2.setColor(EstilosUI.FONDO_OSCURO);
             g2.fillRect(0, 0, getWidth(), getHeight());
         }
+        EstilosUI.pintarVineta(g2, getWidth(), getHeight(), 190);
         g2.dispose();
     }
 }

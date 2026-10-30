@@ -4,6 +4,7 @@ import rpg.controlador.ControladorJuego;
 import rpg.modelo.*;
 import rpg.util.EstilosUI;
 import rpg.util.GestorRecursos;
+import rpg.util.PanelVidrio;
 
 import javax.swing.*;
 import java.awt.*;
@@ -61,9 +62,8 @@ public class PantallaKiosco extends JPanel {
         pnlCentro.setOpaque(false);
 
         // --- Panel Comprar ---
-        JPanel pnlComprar = new JPanel();
+        PanelVidrio pnlComprar = new PanelVidrio(18);
         pnlComprar.setLayout(new BoxLayout(pnlComprar, BoxLayout.Y_AXIS));
-        pnlComprar.setBackground(new Color(24, 28, 40));
         pnlComprar.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createTitledBorder(
                         BorderFactory.createLineBorder(new Color(39, 174, 96), 1, true),
@@ -104,9 +104,8 @@ public class PantallaKiosco extends JPanel {
         pnlCentro.add(pnlComprar);
 
         // --- Panel Vender ---
-        JPanel pnlVender = new JPanel();
+        PanelVidrio pnlVender = new PanelVidrio(18);
         pnlVender.setLayout(new BoxLayout(pnlVender, BoxLayout.Y_AXIS));
-        pnlVender.setBackground(new Color(24, 28, 40));
         pnlVender.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createTitledBorder(
                         BorderFactory.createLineBorder(new Color(230, 126, 34), 1, true),
@@ -218,6 +217,7 @@ public class PantallaKiosco extends JPanel {
             g2.setColor(EstilosUI.FONDO_OSCURO);
             g2.fillRect(0, 0, getWidth(), getHeight());
         }
+        EstilosUI.pintarVineta(g2, getWidth(), getHeight(), 190);
         g2.dispose();
     }
 }

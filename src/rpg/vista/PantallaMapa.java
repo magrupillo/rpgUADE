@@ -5,6 +5,7 @@ import rpg.dto.MapaDTO;
 import rpg.dto.NodoDTO;
 import rpg.util.EstilosUI;
 import rpg.util.GestorRecursos;
+import rpg.util.PanelVidrio;
 
 import javax.swing.*;
 import java.awt.*;
@@ -33,12 +34,9 @@ public class PantallaMapa extends JPanel {
         setBorder(BorderFactory.createEmptyBorder(15, 20, 15, 20));
 
         // ── 1. Barra Superior con Estado, Oro y Navegación ──────────────────────────
-        JPanel barraSuperior = new JPanel(new BorderLayout(15, 0));
-        barraSuperior.setBackground(new Color(24, 28, 40, 230));
-        barraSuperior.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(EstilosUI.BORDE_SUAVE, 1, true),
-                BorderFactory.createEmptyBorder(10, 18, 10, 18)
-        ));
+        PanelVidrio barraSuperior = new PanelVidrio(14);
+        barraSuperior.setLayout(new BorderLayout(15, 0));
+        barraSuperior.setBorder(BorderFactory.createEmptyBorder(10, 18, 10, 18));
 
         JPanel pnlInfo = new JPanel(new FlowLayout(FlowLayout.LEFT, 20, 0));
         pnlInfo.setOpaque(false);
@@ -278,6 +276,7 @@ public class PantallaMapa extends JPanel {
             g2.setColor(EstilosUI.FONDO_OSCURO);
             g2.fillRect(0, 0, getWidth(), getHeight());
         }
+        EstilosUI.pintarVineta(g2, getWidth(), getHeight(), 190);
         g2.dispose();
     }
 }
