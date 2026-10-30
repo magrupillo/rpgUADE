@@ -1,10 +1,8 @@
 package rpg.modelo;
 
-/**
- * Nodo de fogata / descanso.
- * Al ser visitado, permite a la party recuperar vida, maná o ganar experiencia.
- */
 public class NodoFogata extends Nodo {
+
+    private static final long serialVersionUID = 1L;
 
     public NodoFogata(int id, int columna, String nombre) {
         super(id, columna, nombre);
@@ -14,13 +12,13 @@ public class NodoFogata extends Nodo {
     public String getIcono() { return "🔥"; }
 
     @Override
-    public String getDescripcion() { return "Fogata / Descanso"; }
+    public String getDescripcion() { return "Fogón / Descanso Criollo"; }
 
     @Override
     public void alVisitar(Juego juego) {
         juego.setBatallaActual(null);
         juego.setEventoActual(null);
-        RegistroCombate.registrar("🔥 La party encuentra un remanso de paz en la Fogata del refugio.");
+        RegistroCombate.registrar("La party se sienta junto al Fogón a descansar y calentar agua para los mates.");
     }
 
     @Override

@@ -4,107 +4,109 @@ import java.io.Serializable;
 import java.util.Random;
 
 /**
- * Representa un evento narrativo o misterioso en la torre.
+ * Representa un evento narrativo con sabor criollo y jerga argentina.
  * Ofrece dos opciones al jugador con recompensas o riesgos tácticos.
  */
 public class EventoAleatorio implements Serializable {
 
+    private static final long serialVersionUID = 1L;
+
     private final String id;
     private final String titulo;
     private final String descripcion;
-    private final String opcionA;
-    private final String opcionB;
+    private final OpcionEvento opcionA;
+    private final OpcionEvento opcionB;
     private final Random random = new Random();
 
-    public EventoAleatorio(String id, String titulo, String descripcion, String opcionA, String opcionB) {
+    public EventoAleatorio(String id, String titulo, String descripcion, String textoA, String textoB) {
         this.id = id;
         this.titulo = titulo;
         this.descripcion = descripcion;
-        this.opcionA = opcionA;
-        this.opcionB = opcionB;
+        this.opcionA = new OpcionEvento(textoA, "");
+        this.opcionB = new OpcionEvento(textoB, "");
     }
 
-    public static EventoAleatorio crearBrebajeMisterioso() {
+    public static EventoAleatorio crearBebidaMisteriosa() {
         return new EventoAleatorio(
-                "BREBAJE",
-                "🧪 El Brebaje Misterioso",
-                "En una mesa de alquimia olvidada encuentras una ampolla de cristal con un líquido resplandeciente.\n" +
-                "Una inscripción borrosa advierte sobre sus propiedades mágicas volátiles.\n\n" +
-                "¿Qué decides hacer?",
-                "Beber el brebaje (+50% MP a la party, 20% riesgo de Veneno)",
-                "Ignorar y continuar con cautela (Sin riesgo)"
+                "BEBIDA",
+                "La Bebida Misteriosa",
+                "Sobre una mesa de fórmica encontrás una jarra con un menjunje oscuro que despide olor a fernet con hierbas del conurbano.\n" +
+                "Una servilleta arrugada dice: 'Tomalo si te la bancás'.\n\n" +
+                "¿Qué hacés?",
+                "Pegarle un trago al elixir (+50% MP a toda la party, 20% riesgo de resaca/veneno)",
+                "Pasar de largo y tomar agua de la canilla (Sin riesgo)"
         );
     }
 
-    public static EventoAleatorio crearAltarDeSangre() {
+    public static EventoAleatorio crearPasilloPeligroso() {
         return new EventoAleatorio(
-                "ALTAR_SANGRE",
-                "🩸 El Altar de Sangre Ancestral",
-                "Un monolito de piedra obsidiana emite un zumbido carmesí. Runas antiguas susurran promesas de poder a cambio de vitalidad.\n\n" +
-                "¿Deseas ofrecer un tributo de sangre a cambio de fuerza destructiva?",
-                "Ofrenda de sangre (-25% Vida actual, +5 Ataque Base permanente a todos)",
-                "Rezar con respeto (Bendición de +2 Defensa Base permanente, sin daño)"
+                "PASILLO_PELIGROSO",
+                "El Pasillo Peligroso",
+                "Un callejón oscuro sin luz donde se escuchan murmullos y motos sin silenciador a lo lejos.\n" +
+                "Si te hacés el loco podés salir fortalecido, o te podés ganar un disgusto.\n\n" +
+                "¿Cómo cruzan?",
+                "Cruzar con el pecho inflado y cara de malo (-20% HP actual por el susto, +6 ATQ permanente)",
+                "Ir pegado a la pared con cautela (+3 Defensa permanente por estar alerta)"
         );
     }
 
-    public static EventoAleatorio crearCofreMaldito() {
+    public static EventoAleatorio crearRegaloDeLaSuegra() {
         return new EventoAleatorio(
-                "COFRE_MALDITO",
-                "📦 El Cofre con Cadenas Rúnicas",
-                "En el centro de una cripta húmeda yace un arcón ornamentado rodeado de huesos y cadenas oxidadas.\n" +
-                "Podría contener reliquias invaluables o una trampa mortal.\n\n" +
-                "¿Cómo procedes?",
-                "Forzar las cerraduras (70% Botín Valioso + Pociones, 30% Trampa Explosiva)",
-                "Desactivar mecanismos con prudencia (Gana 1 Poción de Maná segura)"
+                "REGALO_SUEGRA",
+                "El Regalo de la Suegra",
+                "Una caja gigante envuelta con papel de diario y un moño desprolijo te corta el paso.\n" +
+                "Una tarjeta dice: 'Para que no digan que nunca les regalo nada'. Puede ser una masa o un fiasco total.\n\n" +
+                "¿La abrís?",
+                "Abrir el paquete con entusiasmo (70% Botín copado y pociones, 30% explosión de naftalina y aturdimiento)",
+                "Desarmarlo con guantes de cocina (Extraés 1 Poción de Maná sana y salva)"
         );
     }
 
-    public static EventoAleatorio crearFuenteDeHadas() {
+    public static EventoAleatorio crearEstatuaGauchitoGil() {
         return new EventoAleatorio(
-                "FUENTE_HADAS",
-                "✨ La Fuente Luminosa de las Hadas",
-                "Un manantial de aguas cristalinas brota en una gruta subterránea iluminada por hongos fluorescentes.\n" +
-                "El aire huele a lilas y rocío matutino.\n\n" +
-                "¿Cómo aprovechas el manantial?",
-                "Beber y bañarse (Restaura 60% HP a toda la party y purifica estados)",
-                "Llenar frascos de cristal (Agrega 2 Pociones de Vida al Inventario compartido)"
+                "GAUCHITO_GIL",
+                "La Estatua del Gauchito Gil",
+                "Al costado del sendero brilla un santuario rojo con velas encendidas, cintas rojas y flores frescas.\n" +
+                "La presencia del santo popular llena el ambiente de respeto y protección gaucha.\n\n" +
+                "¿Cómo le rendís tributo?",
+                "Dejarle un cigarrillo y persignarse (Restaura 60% HP a toda la party y limpia estados alterados)",
+                "Cargar las botellas de agua bendecida (+2 Pociones de Vida para el inventario)"
         );
     }
 
-    public static EventoAleatorio crearMercaderDeSombras() {
+    public static EventoAleatorio crearKioscoErrante() {
         return new EventoAleatorio(
-                "MERCADER",
-                "👤 El Mercader Errante de las Sombras",
-                "Una figura encapuchada sentada junto a un farol morado te ofrece provisiones a cambio de tributos de experiencia.\n\n" +
-                "¿Qué trato decides pactar?",
-                "Trueque de reliquias (Entrega 80 XP de la party por una Espada de Acero +10 ATQ)",
-                "Comprar suministros (Entrega 40 XP por 1 Poción de Vida y 1 de Maná)"
+                "KIOSCO_EVENTO",
+                "El Kiosco Errante de la Noche",
+                "Una ventana enrejada con luz de tubo fluorescente atiende las 24 horas. Don Tito te mira desde adentro.\n" +
+                "'Tengo caramelos que no te devuelven vuelto, o algún fierro que te puede servir'.\n\n" +
+                "¿Qué le pedís?",
+                "Pegarle una ojeada a las armas pesadas (Entrega 75 XP por un Zarpado Machete +16 ATQ)",
+                "Comprar un combo de supervivencia (Entrega 40 XP por 1 Poción de Vida y 1 de Maná)"
         );
     }
 
-    public static EventoAleatorio crearBibliotecaArcana() {
+    public static EventoAleatorio crearPuestoDeDiarios() {
         return new EventoAleatorio(
-                "BIBLIOTECA",
-                "📚 La Biblioteca de los Grimorios Perdidos",
-                "Estanterías colosales repletas de pergaminos arcanos y códices antiguos aguardan en un silencio sepulcral.\n\n" +
-                "¿En qué decides enfocar el tiempo del equipo?",
-                "Estudiar tácticas y hechizos antiguos (Otorga 150 XP repartida equitativamente)",
-                "Meditar en la sala de lectura (Recupera 40% de Vida y 40% de Maná a toda la party)"
+                "PUESTO_DIARIOS",
+                "El Puesto de Diarios",
+                "Un puesto de chapa repleto de revistas de crucigramas, el diario del día y fascículos coleccionables.\n" +
+                "El canillita te deja ojear mientras te cebás unos mates con bizcochitos.\n\n" +
+                "¿En qué se ponen a leer?",
+                "Leer los suplementos de táctica y fútbol (Otorga 160 XP repartida equitativamente)",
+                "Comerse unos bizcochitos en el banco (Recupera 40% de Vida y Maná a toda la party)"
         );
     }
 
-    /**
-     * Genera un evento procedural aleatorio garantizando variedad en la run.
-     */
     public static EventoAleatorio crearAleatorio(Random rnd) {
         int eleccion = rnd.nextInt(6);
         return switch (eleccion) {
-            case 0 -> crearBrebajeMisterioso();
-            case 1 -> crearAltarDeSangre();
-            case 2 -> crearCofreMaldito();
-            case 3 -> crearFuenteDeHadas();
-            case 4 -> crearMercaderDeSombras();
-            default -> crearBibliotecaArcana();
+            case 0 -> crearBebidaMisteriosa();
+            case 1 -> crearPasilloPeligroso();
+            case 2 -> crearRegaloDeLaSuegra();
+            case 3 -> crearEstatuaGauchitoGil();
+            case 4 -> crearKioscoErrante();
+            default -> crearPuestoDeDiarios();
         };
     }
 
@@ -112,126 +114,122 @@ public class EventoAleatorio implements Serializable {
         return crearAleatorio(new Random());
     }
 
-    // ─── Getters ─────────────────────────────────────────────────────────────────
-
     public String getId() { return id; }
     public String getTitulo() { return titulo; }
     public String getDescripcion() { return descripcion; }
-    public String getOpcionA() { return opcionA; }
-    public String getOpcionB() { return opcionB; }
-
-    // ─── Resolución del evento ───────────────────────────────────────────────────
+    public String getOpcionA() { return opcionA.getTexto(); }
+    public String getOpcionB() { return opcionB.getTexto(); }
 
     public String resolverOpcion(int opcion, Party party) {
         StringBuilder sb = new StringBuilder();
-        RegistroCombate.registrar("\n=== EVENTO: " + titulo + " ===");
+        RegistroCombate.registrar("\n=== EVENTO: " + titulo.toUpperCase() + " ===");
 
         switch (id) {
-            case "ALTAR_SANGRE" -> {
+            case "PASILLO_PELIGROSO" -> {
                 if (opcion == 1) {
-                    sb.append("🩸 La party entrega parte de su sangre al altar. Una furia incandescente los envuelve!\n");
+                    sb.append("La party cruza a paso firme. La adrenalina despierta su instinto de combate!\n");
                     for (Personaje p : party.getMiembros()) {
                         if (p.estaVivo()) {
-                            int danio = Math.max(5, (int) (p.getVida() * 0.25));
+                            int danio = Math.max(5, (int) (p.getVida() * 0.20));
                             p.curarVida(-danio);
-                            p.aumentarAtaqueBase(5);
-                            sb.append("  • ").append(p.getNombre()).append(" sufrió ").append(danio)
-                              .append(" de daño, pero su Ataque aumentó permanentemente en +5 (ATQ: ").append(p.getAtaque()).append(")!\n");
+                            p.aumentarAtaqueBase(6);
+                            sb.append("  • ").append(p.getNombre()).append(" sintió la tensión (-").append(danio)
+                              .append(" HP), pero ganó +6 Ataque Base permanente (ATQ: ").append(p.getAtaque()).append(")!\n");
                         }
                     }
                 } else {
-                    sb.append("🛡️ La party inclina la cabeza con reverencia. Una bendición pétrea los protege.\n");
+                    sb.append("Avanzan con sigilo esquivando peligros. Se vuelven más atentos y precavidos.\n");
                     for (Personaje p : party.getMiembros()) {
                         if (p.estaVivo()) {
-                            p.aumentarDefensaBase(2);
-                            sb.append("  • ").append(p.getNombre()).append(" ganó +2 de Defensa Base permanente (DEF: ").append(p.getDefensa()).append(").\n");
+                            p.aumentarDefensaBase(3);
+                            sb.append("  • ").append(p.getNombre()).append(" ganó +3 Defensa Base permanente (DEF: ").append(p.getDefensa()).append(").\n");
                         }
                     }
                 }
             }
-            case "COFRE_MALDITO" -> {
+            case "REGALO_SUEGRA" -> {
                 if (opcion == 1) {
                     boolean exito = random.nextInt(100) < 70;
                     if (exito) {
-                        sb.append("🎉 ¡Éxito! El cofre cede sin activar sus trampas rúnicas.\n");
-                        party.getInventario().agregarItem(new PocionVida("Poción de Vida Mayor", "Restaura 80 HP", 80));
-                        party.getInventario().agregarItem(new PocionMana("Poción de Maná Mayor", "Restaura 60 MP", 60));
-                        party.getInventario().agregarItem(new Armadura("Coraza Encantada", "+12 DEF", 12));
-                        sb.append("  + Se guardaron pociones mayores y una Coraza Encantada en el Inventario compartido!\n");
+                        sb.append("¡Milagro! Adentro había cosas útiles y comida casera!\n");
+                        party.getInventario().agregarItem(new PocionVida("Poción de Vida Mayor", "Restaura 80 HP", 80, 40, 20));
+                        party.getInventario().agregarItem(new PocionMana("Poción de Maná Mayor", "Restaura 60 MP", 60, 35, 18));
+                        party.getInventario().agregarItem(new Armadura("Chaleco kevlar", "Protección táctica reforzada (+14 DEF)", 14, 85, 40));
+                        sb.append("  + Se guardaron pociones mayores y un Chaleco Kevlar en el inventario!\n");
                     } else {
-                        sb.append("💥 ¡TRAMPA! Una explosión arcana estalla al abrir el arcón!\n");
+                        sb.append("¡Pffff! Una nube de naftalina vieja y resortes oxidados salta a la cara del equipo!\n");
                         for (Personaje p : party.getMiembros()) {
                             if (p.estaVivo()) {
-                                p.recibirDanio(25);
+                                p.recibirDanio(20);
                                 p.setAturdido(true);
-                                sb.append("  ⚠️ ").append(p.getNombre()).append(" fue alcanzado por la explosión y aturdido.\n");
+                                sb.append("  ⚠️ ").append(p.getNombre()).append(" quedó aturdido tosiendo por la naftalina.\n");
                             }
                         }
                     }
                 } else {
-                    sb.append("🔍 Con paciencia desarmas los seguros y extraes un compartimento secreto con 1 Poción de Maná.\n");
-                    party.getInventario().agregarItem(new PocionMana("Poción de Maná", "Restaura 40 MP", 40));
+                    sb.append("Desarmaron la caja con pinzas y rescataron una Poción de Maná intacta.\n");
+                    party.getInventario().agregarItem(new PocionMana("Poción de Maná", "Restaura 40 MP", 40, 20, 10));
                 }
             }
-            case "FUENTE_HADAS" -> {
+            case "GAUCHITO_GIL" -> {
                 if (opcion == 1) {
-                    sb.append("✨ Las aguas benditas revitalizan por completo a los aventureros.\n");
+                    sb.append("La bendición del Gauchito Gil llena el aire. Una calidez fraternal sana las heridas del equipo.\n");
                     for (Personaje p : party.getMiembros()) {
                         if (p.estaVivo()) {
                             int curacion = (int) (p.getVidaMaxima() * 0.60);
                             p.curarVida(curacion);
                             p.setAturdido(false);
                             p.setEnvenenado(false);
-                            sb.append("  💚 ").append(p.getNombre()).append(" restauró ").append(curacion).append(" HP y purificó sus aflicciones.\n");
+                            sb.append("  ").append(p.getNombre()).append(" recuperó ").append(curacion).append(" HP y purificó sus aflicciones.\n");
                         }
                     }
                 } else {
-                    sb.append("🧪 Llenan cuidadosamente dos ampollas de cristal del inventario con agua milagrosa.\n");
-                    party.getInventario().agregarItem(new PocionVida("Elixir de Hada", "Restaura 70 HP", 70));
-                    party.getInventario().agregarItem(new PocionVida("Elixir de Hada", "Restaura 70 HP", 70));
-                    sb.append("  + 2 Elixires de Hada agregados al Inventario.\n");
+                    sb.append("Cargan dos botellitas con el agua bendita del manantial rojo.\n");
+                    party.getInventario().agregarItem(new PocionVida("Poción del Gauchito", "Restaura 70 HP", 70, 35, 18));
+                    party.getInventario().agregarItem(new PocionVida("Poción del Gauchito", "Restaura 70 HP", 70, 35, 18));
+                    sb.append("  + 2 Pociones del Gauchito agregadas al inventario.\n");
                 }
             }
-            case "MERCADER" -> {
+            case "KIOSCO_EVENTO" -> {
                 if (opcion == 1) {
-                    sb.append("⚔️ El mercader asiente con una sonrisa esquelética y entrega una formidable Espada de Acero.\n");
-                    party.getInventario().agregarItem(new Arma("Espada Vorpal de Acero", "+12 ATQ", 12));
-                    sb.append("  + Espada Vorpal de Acero agregada al Inventario compartido.\n");
+                    sb.append("Don Tito les guiña el ojo y saca de abajo del mostrador un tremendo machete.\n");
+                    party.getInventario().agregarItem(new Arma("Zarpado machete", "Hoja afilada de gran filo (+16 ATQ)", 16, 90, 45));
+                    sb.append("  + Zarpado machete (+16 ATQ) agregado al inventario!\n");
                 } else {
-                    sb.append("🧪 El mercader te entrega un fardo con suministros médicos esenciales.\n");
-                    party.getInventario().agregarItem(new PocionVida("Poción de Salud", "Restaura 50 HP", 50));
-                    party.getInventario().agregarItem(new PocionMana("Poción de Maná", "Restaura 40 MP", 40));
-                    sb.append("  + 1 Poción de Salud y 1 Poción de Maná añadidas al Inventario.\n");
+                    sb.append("Don Tito les prepara una bolsita con provisiones básicas.\n");
+                    party.getInventario().agregarItem(new PocionVida("Poción de Vida", "Restaura 50 HP", 50, 25, 12));
+                    party.getInventario().agregarItem(new PocionMana("Poción de Maná", "Restaura 40 MP", 40, 20, 10));
+                    sb.append("  + 1 Poción de Vida y 1 Poción de Maná añadidas al inventario.\n");
                 }
             }
-            case "BIBLIOTECA" -> {
+            case "PUESTO_DIARIOS" -> {
                 if (opcion == 1) {
-                    sb.append("📖 La party estudia antiguas estrategias bélicas y secretos arcanos.\n");
+                    sb.append("La party debate tácticas de juego y se empapa de información valiosa.\n");
                     party.repartirExperiencia(160);
-                    sb.append("  ✨ Se otorgaron 160 XP repartidos entre los miembros del equipo.\n");
+                    sb.append("  Se repartieron 160 XP entre los miembros del equipo.\n");
                 } else {
-                    sb.append("🧘 Un descanso reparador en las silenciosas salas de la biblioteca renueva el vigor del equipo.\n");
+                    sb.append("Un buen mate cocido con bizcochitos en la vereda revitaliza a toda la muchachada.\n");
                     party.recuperarPorcentaje(0.40);
-                    sb.append("  💚 Toda la party recuperó el 40% de su Vida y Maná máximos.\n");
+                    sb.append("  Toda la party recuperó el 40% de su Vida y Maná máximos.\n");
                 }
             }
-            default -> { // BREBAJE
+            default -> { // BEBIDA
                 if (opcion == 1) {
-                    sb.append("✨ La party ingiere el brebaje misterioso. Una potente energía mágica fluye en sus venas!\n");
+                    sb.append("Se mandan el vaso al seco. Una chispa eléctrica les recorre la garganta!\n");
                     for (Personaje p : party.getMiembros()) {
                         if (p.estaVivo()) {
                             int recup = (int) (p.getManaMaximo() * 0.50);
                             p.recuperarMana(recup);
-                            sb.append("  + ").append(p.getNombre()).append(" recuperó ").append(recup).append(" MP.\n");
+                            sb.append("  + ").append(p.getNombre()).append(" recuperó ").append(recup).append(" MP/Ki.\n");
 
                             if (random.nextInt(100) < 20) {
                                 p.setEnvenenado(true);
-                                sb.append("  ⚠️ ¡Efecto adverso! ").append(p.getNombre()).append(" fue afectado por Veneno.\n");
+                                sb.append("  ⚠️ ").append(p.getNombre()).append(" sintió la resaca y quedó envenenado.\n");
                             }
                         }
                     }
                 } else {
-                    sb.append("Deciden no arriesgarse y avanzan con prudencia sin sufrir ningún percance.\n");
+                    sb.append("Deciden no arriesgar el estómago y siguen derecho sin drama.\n");
                 }
             }
         }

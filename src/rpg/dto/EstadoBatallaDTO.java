@@ -54,6 +54,7 @@ public class EstadoBatallaDTO {
     public boolean isBatallaTerminada() { return batallaTerminada; }
     public boolean isVictoria() { return victoria; }
     public String getMensajeFinBatalla() { return mensajeFinBatalla; }
+    public String getMensajeFin() { return mensajeFinBatalla; }
     public String getLugar() { return lugar; }
     public int getRondaActual() { return rondaActual; }
     public List<String> getColaIniciativa() { return colaIniciativa; }

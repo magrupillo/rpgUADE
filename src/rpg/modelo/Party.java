@@ -6,14 +6,20 @@ import java.util.List;
 import java.util.Random;
 
 public class Party implements Serializable {
+
+    private static final long serialVersionUID = 1L;
+
     private List<Personaje> miembros;
     private Inventario inventario;
+    private int oro;
     private final int MAX_MIEMBROS = 4;
+    private final int MIN_MIEMBROS = 2;
     private final Random random = new Random();
 
     public Party() {
         this.miembros = new ArrayList<>();
         this.inventario = new Inventario();
+        this.oro = 50; // Oro inicial
     }
 
     public boolean agregarMiembro(Personaje personaje) {
@@ -27,12 +33,39 @@ public class Party implements Serializable {
         }
     }
 
+    public boolean tieneMinimoMiembros() {
+        return miembros.size() >= MIN_MIEMBROS;
+    }
+
     public List<Personaje> getMiembros() {
         return miembros;
     }
 
     public Inventario getInventario() {
         return inventario;
+    }
+
+    public int getOro() {
+        return oro;
+    }
+
+    public void ganarOro(int cantidad) {
+        if (cantidad > 0) {
+            this.oro += cantidad;
+            RegistroCombate.registrar("Se obtuvieron $" + cantidad + " de oro. (Total: $" + this.oro + ")");
+        }
+    }
+
+    public boolean gastarOro(int cantidad) {
+        if (cantidad <= oro) {
+            this.oro -= cantidad;
+            return true;
+        }
+        return false;
+    }
+
+    public boolean usarConsumible(Consumible consumible, Personaje objetivo) {
+        return inventario.consumirItem(consumible, objetivo);
     }
 
     public boolean estaDerrotada() {
@@ -54,7 +87,7 @@ public class Party implements Serializable {
     }
 
     public Personaje obtenerHeroeConMayorAmenaza() {
-        // Prioriza a los héroes que hayan activado Provocar (Sección 3 y 4)
+        // Prioriza a los héroes que hayan activado Provocar
         for (Personaje p : miembros) {
             if (p.estaVivo() && p.isProvocando()) {
                 return p;
@@ -116,8 +149,26 @@ public class Party implements Serializable {
         }
     }
 
+    public boolean tienePuntosAtributosPendientes() {
+        for (Personaje p : miembros) {
+            if (p.getPuntosAtributoDisponibles() > 0 || p.tieneEleccionHabilidadPendiente()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public int getTotalPuntosPendientes() {
+        int total = 0;
+        for (Personaje p : miembros) {
+            total += p.getPuntosAtributoDisponibles();
+            if (p.tieneEleccionHabilidadPendiente()) total++;
+        }
+        return total;
+    }
+
     public void mostrarEstado() {
-        RegistroCombate.registrar("\n--- Estado del Equipo ---");
+        RegistroCombate.registrar("\n--- Estado del Equipo (Oro: $" + oro + ") ---");
         for (Personaje p : miembros) {
             RegistroCombate.registrar(p.toString());
         }

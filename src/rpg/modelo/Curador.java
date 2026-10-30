@@ -1,80 +1,64 @@
 package rpg.modelo;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class Curador extends Personaje {
+
+    private static final long serialVersionUID = 1L;
 
     private int poderCurativo;
 
     public Curador(String nombre) {
-        super(nombre, 140, 100, 1, 10, 8, 14);
-        this.poderCurativo = 35;
+        super(nombre, 150, 90, 1, 16, 9, 14);
+        this.poderCurativo = 30;
+        inicializarCatalogoHabilidades();
     }
 
-    public Curador(String nombre, int vida, int mana, int nivel, int ataque, int defensa, int velocidad, int poderCurativo) {
-        super(nombre, vida, mana, nivel, ataque, defensa, velocidad);
-        this.poderCurativo = poderCurativo;
+    public Curador() {
+        this("El Guasón");
     }
 
-    public int getPoderCurativo() { return poderCurativo; }
+    public int getPoderCurativo() {
+        return poderCurativo;
+    }
 
     @Override
-    public List<Habilidad> getHabilidades() {
-        int poderCaptura = this.poderCurativo;
-        List<Habilidad> habs = new ArrayList<>();
+    protected void inicializarCatalogoHabilidades() {
+        catalogoHabilidades.clear();
+        habilidadesDesbloqueadas.clear();
 
-        // Habilidad 0: Rezo de Sanación (mono-objetivo: un aliado)
-        habs.add(new Habilidad("✨ Rezo de Sanación", 20) {
-            @Override
-            public boolean ejecutar(Personaje lanzador, List<Combatiente> objetivos, Batalla batalla) {
-                if (!lanzador.gastarMana(getCosteMana())) return false;
-                Combatiente objetivo = null;
-                // objetivos[0] es el aliado seleccionado (Personaje)
-                if (objetivos != null && !objetivos.isEmpty()) {
-                    objetivo = objetivos.get(0);
-                }
-                if (objetivo == null) {
-                    // fallback: el más herido
-                    objetivo = batalla.getParty().obtenerMiembroMasHerido();
-                }
-                if (objetivo == null) objetivo = lanzador;
+        // 1. Inyección de Titán (Default): cura al aliado más herido y purga aflicciones
+        Habilidad inyeccionTitan = new HabilidadCurativa(
+                "Inyección de Titán",
+                "El Guasón inyecta una dosis revitalizante al aliado más herido restaurando gran salud y purgando veneno/aturdimiento.",
+                20,
+                TipoObjetivo.ALIADO_MAS_HERIDO,
+                55,
+                true
+        );
 
-                int curacion = (poderCaptura + lanzador.getAtaque()) * lanzador.getNivel();
-                RegistroCombate.registrar("✨ ¡" + lanzador.getNombre()
-                        + " canaliza Rezo de Sanación sobre " + objetivo.getNombre()
-                        + " restaurando " + curacion + " HP!");
-                if (objetivo instanceof Personaje p) {
-                    p.curarVida(curacion);
-                    p.setAturdido(false);
-                    p.setEnvenenado(false);
-                }
-                return true;
-            }
-        });
+        // 2. Gas de la Risa: daño y asfixia en área
+        Habilidad gasRisa = new HabilidadDeEstado(
+                "Gas de la Risa",
+                "Libera una nube verde intoxicante que daña y asfixia a todos los enemigos presentes.",
+                25,
+                TipoObjetivo.ENEMIGOS_TODOS,
+                HabilidadDeEstado.EfectoEstado.GAS_VENENO_AREA
+        );
 
-        // Habilidad 1: Bendición Sagrada (área: todos los aliados vivos)
-        habs.add(new Habilidad("🌟 Bendición Sagrada [Área + Purificar]", 35) {
-            @Override
-            public boolean ejecutar(Personaje lanzador, List<Combatiente> objetivos, Batalla batalla) {
-                if (!lanzador.gastarMana(getCosteMana())) return false;
-                int curacion = (poderCaptura + (lanzador.getAtaque() / 2)) * lanzador.getNivel();
-                RegistroCombate.registrar("🌟 ¡" + lanzador.getNombre()
-                        + " invoca una Bendición Sagrada purificando a toda la Party!");
-                // objetivos contiene todos los miembros vivos de la party
-                for (Combatiente aliado : objetivos) {
-                    if (aliado.estaVivo() && aliado instanceof Personaje p) {
-                        p.curarVida(curacion);
-                        p.setAturdido(false);
-                        p.setEnvenenado(false);
-                        RegistroCombate.registrar("  💚 " + p.getNombre()
-                                + " recuperó " + curacion + " HP y sus estados fueron purgados.");
-                    }
-                }
-                return true;
-            }
-        });
+        // 3. Regalo Sorpresa: ataque directo explosivo
+        Habilidad regaloSorpresa = new HabilidadOfensiva(
+                "Regalo Sorpresa",
+                "Entrega una caja de broma con resortes y dinamita que revienta en las manos del enemigo.",
+                22,
+                TipoObjetivo.ENEMIGO_INDIVIDUAL,
+                2.1,
+                false
+        );
 
-        return habs;
+        catalogoHabilidades.add(inyeccionTitan);
+        catalogoHabilidades.add(gasRisa);
+        catalogoHabilidades.add(regaloSorpresa);
+
+        // Comienza con la primera habilidad por defecto
+        habilidadesDesbloqueadas.add(inyeccionTitan);
     }
 }

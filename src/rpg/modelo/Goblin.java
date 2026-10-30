@@ -4,30 +4,34 @@ import java.util.List;
 
 public class Goblin extends Enemigo {
 
+    private static final long serialVersionUID = 1L;
+
     public Goblin(String nombre) {
-        super(nombre, 90, 20, 5, 18, 40);
+        super(nombre, 150, 24, 10, 18, 45, 25);
     }
 
-    public Goblin(String nombre, int vida, int ataque, int defensa, int velocidad, int xp) {
-        super(nombre, vida, ataque, defensa, velocidad, xp);
+    public Goblin() {
+        this("El Duende Verde");
     }
 
-    /** Ignora la amenaza; siempre ataca al personaje con menor vida actual. */
+    public Goblin(String nombre, int vida, int ataque, int defensa, int velocidad, int xp, int oro) {
+        super(nombre, vida, ataque, defensa, velocidad, xp, oro);
+    }
+
+    /**
+     * IA del Duende Verde: Busca y ataca con saña al héroe más herido de la party.
+     */
     @Override
     public void ejecutarTurno(Party party, List<Enemigo> aliados) {
-        Personaje objetivoDebil = null;
-        for (Personaje p : party.getMiembros()) {
-            if (p.estaVivo()) {
-                if (objetivoDebil == null || p.getVida() < objetivoDebil.getVida()) {
-                    objetivoDebil = p;
-                }
-            }
+        Personaje objetivo = party.obtenerMiembroMasHerido();
+        if (objetivo == null) {
+            objetivo = party.obtenerPrimerMiembroVivo();
         }
-        if (objetivoDebil != null) {
-            RegistroCombate.registrar("🗡️ " + getNombre()
-                    + " se escurre en las sombras e ignora la amenaza para apuñalar al más herido: "
-                    + objetivoDebil.getNombre() + "!");
-            atacar(objetivoDebil);
+
+        if (objetivo != null) {
+            RegistroCombate.registrar(getNombre() + " se abalanza con risa macabra sobre el héroe más herido ("
+                    + objetivo.getNombre() + ")!");
+            atacar(objetivo);
         }
     }
 }

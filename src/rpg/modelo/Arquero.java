@@ -1,67 +1,70 @@
 package rpg.modelo;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class Arquero extends Personaje {
 
-    private int destreza;
+    private static final long serialVersionUID = 1L;
+
+    private int punteria;
 
     public Arquero(String nombre) {
-        super(nombre, 160, 60, 1, 20, 10, 22);
-        this.destreza = 25;
+        super(nombre, 165, 55, 1, 24, 10, 20);
+        this.punteria = 20;
+        inicializarCatalogoHabilidades();
     }
 
-    public Arquero(String nombre, int vida, int mana, int nivel, int ataque, int defensa, int velocidad, int destreza) {
-        super(nombre, vida, mana, nivel, ataque, defensa, velocidad);
-        this.destreza = destreza;
+    public Arquero() {
+        this("Tommy Shelby");
     }
 
-    public int getDestreza() { return destreza; }
-
-    /** El Arquero tiene mayor probabilidad de crítico. */
-    @Override
-    protected double getCriticoBonus() { return 0.10; }
+    public int getPunteria() {
+        return punteria;
+    }
 
     @Override
-    public List<Habilidad> getHabilidades() {
-        int destrezaCaptura = this.destreza;
-        List<Habilidad> habs = new ArrayList<>();
+    public double getCriticoBonus() {
+        return 0.15;
+    }
 
-        // Habilidad 0: Disparo Certero (mono-objetivo, crítico garantizado x2)
-        habs.add(new Habilidad("🎯 Disparo Certero [Crítico x2]", 15) {
-            @Override
-            public boolean ejecutar(Personaje lanzador, List<Combatiente> objetivos, Batalla batalla) {
-                if (!lanzador.gastarMana(getCosteMana())) return false;
-                if (objetivos == null || objetivos.isEmpty()) {
-                    RegistroCombate.registrar(lanzador.getNombre() + " necesita un objetivo.");
-                    return false;
-                }
-                Combatiente objetivo = objetivos.get(0);
-                int danioCritico = ((lanzador.getAtaque() + destrezaCaptura) * 2) * lanzador.getNivel();
-                RegistroCombate.registrar("🎯 ¡GOLPE CRÍTICO! " + lanzador.getNombre()
-                        + " ejecuta un Disparo Certero letal contra " + objetivo.getNombre() + "!");
-                objetivo.recibirDanio(danioCritico);
-                return true;
-            }
-        });
+    @Override
+    protected void inicializarCatalogoHabilidades() {
+        catalogoHabilidades.clear();
+        habilidadesDesbloqueadas.clear();
 
-        // Habilidad 1: Lluvia de Flechas (área: todos los enemigos vivos)
-        habs.add(new Habilidad("🏹 Lluvia de Flechas [Área]", 25) {
-            @Override
-            public boolean ejecutar(Personaje lanzador, List<Combatiente> objetivos, Batalla batalla) {
-                if (!lanzador.gastarMana(getCosteMana())) return false;
-                int danio = (lanzador.getAtaque() + (destrezaCaptura / 2)) * lanzador.getNivel();
-                RegistroCombate.registrar("🏹 ¡" + lanzador.getNombre()
-                        + " dispara una Lluvia de Flechas sobre el campo enemigo!");
-                // objetivos contiene todos los enemigos vivos
-                for (Combatiente objetivo : objetivos) {
-                    if (objetivo.estaVivo()) objetivo.recibirDanio(danio);
-                }
-                return true;
-            }
-        });
+        // 1. Disparo a la cabeza (Default): Headshot crítico directo
+        Habilidad headshot = new HabilidadOfensiva(
+                "Disparo a la Cabeza",
+                "¡HEADSHOT! Apunta con frialdad y dispara un tiro letal con daño crítico asegurado.",
+                18,
+                TipoObjetivo.ENEMIGO_INDIVIDUAL,
+                2.0,
+                true
+        );
 
-        return habs;
+        // 2. Llamar refuerzos: ataque en área
+        Habilidad refuerzos = new HabilidadOfensiva(
+                "Llamar Refuerzos",
+                "Por orden de los Peaky Blinders: una ráfaga cerrada barre a todos los enemigos en el campo.",
+                26,
+                TipoObjetivo.ENEMIGOS_TODOS,
+                1.3,
+                false
+        );
+
+        // 3. Granada: explosión directa destructiva
+        Habilidad granada = new HabilidadOfensiva(
+                "Granada",
+                "Arroja un explosivo militar que estalla en la cara del objetivo con fuerza desmedida.",
+                22,
+                TipoObjetivo.ENEMIGO_INDIVIDUAL,
+                2.3,
+                false
+        );
+
+        catalogoHabilidades.add(headshot);
+        catalogoHabilidades.add(refuerzos);
+        catalogoHabilidades.add(granada);
+
+        // Comienza con la primera habilidad por defecto
+        habilidadesDesbloqueadas.add(headshot);
     }
 }

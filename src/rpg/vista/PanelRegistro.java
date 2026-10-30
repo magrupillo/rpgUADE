@@ -22,7 +22,7 @@ public class PanelRegistro extends JPanel {
         setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createTitledBorder(
                         BorderFactory.createLineBorder(EstilosUI.BORDE_SUAVE, 1),
-                        "📜 REGISTRO DE COMBATE",
+                        "REGISTRO DE COMBATE",
                         0, 0, EstilosUI.FUENTE_BOLD, EstilosUI.COLOR_ORO
                 ),
                 BorderFactory.createEmptyBorder(6, 8, 8, 8)
@@ -30,18 +30,18 @@ public class PanelRegistro extends JPanel {
 
         areaLog = new JTextArea();
         areaLog.setEditable(false);
-        areaLog.setFont(EstilosUI.FUENTE_LOG);
+        areaLog.setFont(new Font("Consolas", Font.PLAIN, 13));
         areaLog.setBackground(EstilosUI.FONDO_LOG);
-        areaLog.setForeground(new Color(225, 230, 240));
+        areaLog.setForeground(new Color(230, 235, 245));
         areaLog.setCaretColor(EstilosUI.COLOR_ORO);
         areaLog.setLineWrap(true);
         areaLog.setWrapStyleWord(true);
-        areaLog.setMargin(new Insets(6, 8, 6, 8));
+        areaLog.setMargin(new Insets(8, 10, 8, 10));
 
         scrollPane = new JScrollPane(areaLog);
         scrollPane.setBorder(BorderFactory.createLineBorder(EstilosUI.BORDE_SUAVE, 1));
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-        scrollPane.setPreferredSize(new Dimension(300, 160));
+        scrollPane.setPreferredSize(new Dimension(0, 210));
 
         add(scrollPane, BorderLayout.CENTER);
     }

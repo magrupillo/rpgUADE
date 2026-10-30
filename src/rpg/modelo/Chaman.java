@@ -4,33 +4,50 @@ import java.util.List;
 
 public class Chaman extends Enemigo {
 
+    private static final long serialVersionUID = 1L;
+
     public Chaman(String nombre) {
-        super(nombre, 130, 22, 6, 15, 80);
+        super(nombre, 170, 26, 12, 15, 65, 35);
     }
 
-    public Chaman(String nombre, int vida, int ataque, int defensa, int velocidad, int xp) {
-        super(nombre, vida, ataque, defensa, velocidad, xp);
+    public Chaman() {
+        this("Quan Chi");
     }
 
-    /** Cura al aliado más herido si está por debajo del 60% de vida; si no, ataca. */
+    public Chaman(String nombre, int vida, int ataque, int defensa, int velocidad, int xp, int oro) {
+        super(nombre, vida, ataque, defensa, velocidad, xp, oro);
+    }
+
+    /**
+     * IA de Quan Chi:
+     * Cura a su ALIADO más herido (no a sí mismo) si tiene menos del 60% de HP.
+     * Si ningún aliado necesita curación (o está solo), ataca con hechicería oscura.
+     */
     @Override
     public void ejecutarTurno(Party party, List<Enemigo> aliados) {
-        Enemigo aliadoHerido = null;
+        Enemigo aliadoMasHerido = null;
+        double menorPorcentajeVida = 1.0;
+
         for (Enemigo e : aliados) {
-            if (e.estaVivo() && e.getVida() < (e.getVidaMaxima() * 0.6)) {
-                aliadoHerido = e;
-                break;
+            if (e != this && e.estaVivo()) {
+                double pct = (double) e.getVida() / e.getVidaMaxima();
+                if (pct < 0.60 && pct < menorPorcentajeVida) {
+                    menorPorcentajeVida = pct;
+                    aliadoMasHerido = e;
+                }
             }
         }
-        if (aliadoHerido != null) {
-            RegistroCombate.registrar("🔮 " + getNombre()
-                    + " invoca un maleficio curativo sobre su aliado " + aliadoHerido.getNombre() + ".");
-            aliadoHerido.curarVida(35);
+
+        if (aliadoMasHerido != null) {
+            int curacion = 45;
+            RegistroCombate.registrar(getNombre() + " invoca magia nigromántica y cura a su aliado "
+                    + aliadoMasHerido.getNombre() + " (+ " + curacion + " HP)!");
+            aliadoMasHerido.curarVida(curacion);
         } else {
             Personaje objetivo = party.obtenerPrimerMiembroVivo();
             if (objetivo != null) {
-                RegistroCombate.registrar("⚡ " + getNombre()
-                        + " lanza un rayo de energía oscura contra " + objetivo.getNombre() + "!");
+                RegistroCombate.registrar(getNombre() + " conjura una calavera de fuego espectral contra "
+                        + objetivo.getNombre() + "!");
                 atacar(objetivo);
             }
         }

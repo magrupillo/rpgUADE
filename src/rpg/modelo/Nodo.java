@@ -16,12 +16,15 @@ import java.util.List;
  */
 public abstract class Nodo implements Serializable {
 
+    private static final long serialVersionUID = 1L;
+
     private final int id;
     private final int columna;   // nivel de profundidad en el mapa (0 = inicio)
     private final String nombre;
     private final List<Integer> conexiones;
     private boolean completado;
     private boolean disponible;
+    private boolean revelado;
 
     public Nodo(int id, int columna, String nombre) {
         this.id = id;
@@ -30,6 +33,7 @@ public abstract class Nodo implements Serializable {
         this.conexiones = new ArrayList<>();
         this.completado = false;
         this.disponible = (columna == 0);
+        this.revelado = (columna <= 1);
     }
 
     // ─── Getters ────────────────────────────────────────────────────────────────
@@ -50,6 +54,10 @@ public abstract class Nodo implements Serializable {
 
     public void setDisponible(boolean disponible) { this.disponible = disponible; }
 
+    public boolean isRevelado() { return revelado; }
+
+    public void setRevelado(boolean revelado) { this.revelado = revelado; }
+
     // ─── Conexiones ──────────────────────────────────────────────────────────────
 
     public void conectarCon(int idDestino) {
@@ -59,6 +67,9 @@ public abstract class Nodo implements Serializable {
     }
 
     // ─── Datos de presentación (polimórficos) ────────────────────────────────────
+
+    /** Indica si el nodo corresponde a un jefe de piso. */
+    public boolean esJefe() { return false; }
 
     /** Icono/emoji representativo del tipo de nodo para la UI. */
     public abstract String getIcono();

@@ -5,15 +5,37 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Inventario implements Serializable {
-    private List<Item> items;
 
-    public Inventario() {
+    private static final long serialVersionUID = 1L;
+
+    private final List<Item> items;
+    private final int capacidadMaxima;
+
+    public Inventario(int capacidadMaxima) {
         this.items = new ArrayList<>();
+        this.capacidadMaxima = capacidadMaxima;
     }
 
-    public void agregarItem(Item item) {
+    public Inventario() {
+        this(20);
+    }
+
+    public int getCapacidadMaxima() {
+        return capacidadMaxima;
+    }
+
+    public boolean estaLleno() {
+        return items.size() >= capacidadMaxima;
+    }
+
+    public boolean agregarItem(Item item) {
+        if (estaLleno()) {
+            RegistroCombate.registrar("El inventario está lleno (capacidad máxima: " + capacidadMaxima + ").");
+            return false;
+        }
         items.add(item);
         RegistroCombate.registrar("Se guardó en el inventario: " + item.getNombre());
+        return true;
     }
 
     public boolean removerItem(Item item) {

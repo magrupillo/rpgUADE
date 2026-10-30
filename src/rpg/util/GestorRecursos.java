@@ -58,7 +58,8 @@ public class GestorRecursos {
                             BufferedImage leida = ImageIO.read(archivo);
                             if (leida != null) return leida;
                         }
-                    } catch (Exception ignored) {
+                    } catch (Exception e) {
+                        System.err.println("[GestorRecursos] No se pudo cargar imagen desde archivo " + dir + nombre + ext + ": " + e.getMessage());
                     }
                 }
             }
@@ -80,7 +81,8 @@ public class GestorRecursos {
                             BufferedImage leida = ImageIO.read(url);
                             if (leida != null) return leida;
                         }
-                    } catch (Exception ignored) {
+                    } catch (Exception e) {
+                        System.err.println("[GestorRecursos] No se pudo cargar recurso desde classpath: " + e.getMessage());
                     }
                 }
             }
@@ -100,20 +102,45 @@ public class GestorRecursos {
             nombres.add(normalizado);
         }
 
-        // Alias comunes según las entidades del juego
-        if (normalizado.contains("jefe")) {
-            if (!nombres.contains("dragon")) nombres.add("dragon");
-            if (!nombres.contains("jefe_dragon")) nombres.add("jefe_dragon");
+        // Alias comunes de personajes y enemigos
+        if (normalizado.contains("kratos") || normalizado.contains("guerrero")) {
+            if (!nombres.contains("guerrero")) nombres.add("guerrero");
+            if (!nombres.contains("kratos")) nombres.add("kratos");
         }
-        if (normalizado.contains("dragon")) {
+        if (normalizado.contains("tommy") || normalizado.contains("shelby") || normalizado.contains("arquero")) {
+            if (!nombres.contains("arquero")) nombres.add("arquero");
+        }
+        if (normalizado.contains("guason") || normalizado.contains("joker") || normalizado.contains("curador")) {
+            if (!nombres.contains("curador")) nombres.add("curador");
+        }
+        if (normalizado.contains("goku") || normalizado.contains("mago")) {
+            if (!nombres.contains("mago")) nombres.add("mago");
+        }
+        if (normalizado.contains("duende") || normalizado.contains("goblin")) {
+            if (!nombres.contains("goblin")) nombres.add("goblin");
+        }
+        if (normalizado.contains("cocodrilo") || normalizado.contains("orco")) {
+            if (!nombres.contains("orco")) nombres.add("orco");
+        }
+        if (normalizado.contains("quan") || normalizado.contains("chaman")) {
+            if (!nombres.contains("chaman")) nombres.add("chaman");
+        }
+        if (normalizado.contains("skeletor") || normalizado.contains("esqueleto")) {
+            if (!nombres.contains("esqueleto")) nombres.add("esqueleto");
+        }
+        if (normalizado.contains("bowser") || normalizado.contains("jefe") || normalizado.contains("dragon")) {
             if (!nombres.contains("jefe")) nombres.add("jefe");
-        }
-        if (normalizado.contains("curador")) {
-            if (!nombres.contains("sacerdote")) nombres.add("sacerdote");
-            if (!nombres.contains("clerigo")) nombres.add("clerigo");
+            if (!nombres.contains("bowser")) nombres.add("bowser");
         }
 
         return nombres;
+    }
+
+    public static Image obtenerFondo(String nombreFondo) {
+        BufferedImage img = buscarYCargarImagen(nombreFondo);
+        if (img != null) return img;
+        // Fallback a otro si no encuentra
+        return buscarYCargarImagen("otro");
     }
 
     private static Image escalarImagen(BufferedImage origen, int ancho, int alto) {

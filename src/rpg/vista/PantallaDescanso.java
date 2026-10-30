@@ -2,6 +2,7 @@ package rpg.vista;
 
 import rpg.controlador.ControladorJuego;
 import rpg.util.EstilosUI;
+import rpg.util.GestorRecursos;
 
 import javax.swing.*;
 import java.awt.*;
@@ -26,12 +27,7 @@ public class PantallaDescanso extends JPanel {
         ));
         panelCentral.setPreferredSize(new Dimension(650, 420));
 
-        JLabel lblIcono = new JLabel("🔥", SwingConstants.CENTER);
-        lblIcono.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 48));
-        lblIcono.setAlignmentX(Component.CENTER_ALIGNMENT);
-        panelCentral.add(lblIcono);
-
-        JLabel lblTitulo = new JLabel("FOGATA DEL REFUGIO", SwingConstants.CENTER);
+        JLabel lblTitulo = new JLabel("FOGON CRIOLLO", SwingConstants.CENTER);
         lblTitulo.setFont(EstilosUI.FUENTE_TITULO);
         lblTitulo.setForeground(new Color(243, 156, 18));
         lblTitulo.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -39,7 +35,7 @@ public class PantallaDescanso extends JPanel {
 
         panelCentral.add(Box.createVerticalStrut(10));
 
-        JLabel lblDesc = new JLabel("<html><center>Un punto seguro en la torre. El fuego crepitante reconforta a la party.<br>¿Qué deseas hacer antes de continuar?</center></html>", SwingConstants.CENTER);
+        JLabel lblDesc = new JLabel("<html><center>Un punto seguro en la torre. El fuego crepitante reconforta al grupo.<br>¿Que deciden hacer antes de continuar?</center></html>", SwingConstants.CENTER);
         lblDesc.setFont(EstilosUI.FUENTE_NORMAL);
         lblDesc.setForeground(EstilosUI.TEXTO_MUTED);
         lblDesc.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -47,18 +43,18 @@ public class PantallaDescanso extends JPanel {
 
         panelCentral.add(Box.createVerticalStrut(25));
 
-        btnDescansar = EstilosUI.crearBoton("🔥 Descansar junto al fuego (Recupera 40% HP y MP)", new Color(39, 174, 96), new Color(46, 204, 113));
+        btnDescansar = EstilosUI.crearBoton("Tomar unos mates y descansar (Recupera 40% HP y MP)", new Color(39, 174, 96), new Color(46, 204, 113));
         btnDescansar.setFont(EstilosUI.FUENTE_BOLD);
-        btnDescansar.setMaximumSize(new Dimension(500, 42));
+        btnDescansar.setMaximumSize(new Dimension(520, 42));
         btnDescansar.setAlignmentX(Component.CENTER_ALIGNMENT);
         btnDescansar.addActionListener(e -> accionar(1));
         panelCentral.add(btnDescansar);
 
         panelCentral.add(Box.createVerticalStrut(12));
 
-        btnEntrenar = EstilosUI.crearBoton("⚔️ Entrenar técnicas de combate (+120 XP grupal)", new Color(41, 128, 185), new Color(52, 152, 219));
+        btnEntrenar = EstilosUI.crearBoton("Entrenar tecnicas de combate (+120 XP grupal)", new Color(41, 128, 185), new Color(52, 152, 219));
         btnEntrenar.setFont(EstilosUI.FUENTE_BOLD);
-        btnEntrenar.setMaximumSize(new Dimension(500, 42));
+        btnEntrenar.setMaximumSize(new Dimension(520, 42));
         btnEntrenar.setAlignmentX(Component.CENTER_ALIGNMENT);
         btnEntrenar.addActionListener(e -> accionar(2));
         panelCentral.add(btnEntrenar);
@@ -74,7 +70,7 @@ public class PantallaDescanso extends JPanel {
 
         panelCentral.add(Box.createVerticalStrut(10));
 
-        btnContinuar = EstilosUI.crearBoton("🗺️ Continuar la Ascensión", new Color(39, 174, 96), new Color(46, 204, 113));
+        btnContinuar = EstilosUI.crearBoton("Continuar la Ascension", new Color(39, 174, 96), new Color(46, 204, 113));
         btnContinuar.setMaximumSize(new Dimension(280, 40));
         btnContinuar.setAlignmentX(Component.CENTER_ALIGNMENT);
         btnContinuar.setVisible(false);
@@ -84,6 +80,19 @@ public class PantallaDescanso extends JPanel {
         panelCentral.add(btnContinuar);
 
         add(panelCentral);
+    }
+
+    @Override
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        Image fondo = GestorRecursos.obtenerFondo("otro");
+        if (fondo != null) {
+            g.drawImage(fondo, 0, 0, getWidth(), getHeight(), this);
+            Graphics2D g2 = (Graphics2D) g.create();
+            g2.setColor(new Color(15, 18, 25, 200));
+            g2.fillRect(0, 0, getWidth(), getHeight());
+            g2.dispose();
+        }
     }
 
     public void setControlador(ControladorJuego controlador) {

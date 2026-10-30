@@ -20,6 +20,10 @@ public class ItemDTO {
         return indice;
     }
 
+    public int getIndiceInventario() {
+        return indice;
+    }
+
     public String getNombre() {
         return nombre;
     }
@@ -29,6 +33,10 @@ public class ItemDTO {
     }
 
     public boolean isEsConsumible() {
+        return esConsumible;
+    }
+
+    public boolean isConsumible() {
         return esConsumible;
     }
 

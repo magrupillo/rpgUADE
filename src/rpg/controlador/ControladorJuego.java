@@ -4,17 +4,19 @@ import rpg.dto.*;
 import rpg.modelo.*;
 import rpg.vista.PantallaBatalla;
 
+import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Controlador Principal del sistema MVC.
- * Coordina las transiciones entre pantallas (Inicio, Mapa, Combate, Resultados, Party, Evento, Descanso).
- * No accede directamente al modelo desde la vista; todo pasa por este controlador.
+ * Controlador Principal del sistema MVC para "El Último Ascenso".
+ * Coordina las transiciones entre pantallas:
+ * Inicio, Torre, Mapa, Kiosco, Combate, Resultados, Party, Evento, Descanso.
+ * Maneja excepciones de persistencia (Clase 13) informando a la vista mediante JOptionPane.
  */
 public class ControladorJuego implements NodoVisitor {
 
-    private final Juego juego;
+    private Juego juego;
     private final PantallaBatalla vista;
     private ControladorBatalla controladorBatalla;
 
@@ -36,25 +38,72 @@ public class ControladorJuego implements NodoVisitor {
     }
 
     public void abrirCreacionParty() {
-        vista.mostrarPantalla("CREACION");
+        iniciarNuevaPartida();
+    }
+
+    public void iniciarNuevaPartida() {
+        juego = new Juego();
+        juego.iniciarNuevaPartida();
+        mostrarPantallaTorre();
     }
 
     public void iniciarPartidaConParty(Party party) {
+        juego = new Juego();
         juego.iniciarNuevaPartida(party);
-        volverAlMapa();
+        mostrarPantallaTorre();
     }
 
     public void cargarPartida() {
-        Juego juegoGuardado = GestorPersistencia.cargarPartida();
-        if (juegoGuardado != null) {
-            // Redirigir al juego cargado
-            ControladorJuego ctrlCargado = new ControladorJuego(juegoGuardado, vista);
-            ctrlCargado.volverAlMapa();
-        } else {
-            javax.swing.JOptionPane.showMessageDialog(null,
-                    "No se encontró ninguna partida guardada o el archivo está corrupto.",
-                    "Cargar partida", javax.swing.JOptionPane.INFORMATION_MESSAGE);
+        if (!GestorPersistencia.existePartidaGuardada()) {
+            JOptionPane.showMessageDialog(vista,
+                    "No hay ninguna partida guardada disponible.",
+                    "Cargar Partida", JOptionPane.INFORMATION_MESSAGE);
+            return;
         }
+
+        try {
+            Juego juegoCargado = GestorPersistencia.cargarPartida();
+            this.juego = juegoCargado;
+            JOptionPane.showMessageDialog(vista,
+                    "¡Partida cargada exitosamente!\nPiso actual: " + juego.getPisoActual(),
+                    "Cargar Partida", JOptionPane.INFORMATION_MESSAGE);
+
+            if (juego.getMapa().isJefePisoCompletado()) {
+                mostrarPantallaTorre();
+            } else {
+                volverAlMapa();
+            }
+        } catch (PersistenciaException e) {
+            JOptionPane.showMessageDialog(vista,
+                    "No se pudo cargar la partida guardada.\nDetalle: " + e.getMessage(),
+                    "Archivo Dañado o Ilegible", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    public void guardarPartida() {
+        try {
+            GestorPersistencia.guardarPartida(juego);
+            vista.actualizarEstadoGuardado();
+            JOptionPane.showMessageDialog(vista,
+                    "Partida guardada correctamente en el disco.",
+                    "Guardar Partida", JOptionPane.INFORMATION_MESSAGE);
+        } catch (PersistenciaException e) {
+            JOptionPane.showMessageDialog(vista,
+                    "Fallo al guardar la partida:\n" + e.getMessage(),
+                    "Error de Persistencia", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    // ─── Pantalla Torre ───────────────────────────────────────────────────────────
+
+    public void mostrarPantallaTorre() {
+        vista.actualizarTorre(juego);
+        vista.mostrarPantalla("TORRE");
+    }
+
+    public void entrarPiso(int piso) {
+        juego.avanzarPiso(piso);
+        volverAlMapa();
     }
 
     // ─── Pantalla Mapa ────────────────────────────────────────────────────────────
@@ -73,21 +122,24 @@ public class ControladorJuego implements NodoVisitor {
                     n.isCompletado(),
                     n.isDisponible(),
                     esActual,
-                    n.getConexiones()
+                    n.getConexiones(),
+                    n.isRevelado()
             ));
         }
 
-        // Sin metaprogresión: pasamos 0 como meta puntos (no existe entre runs)
+        boolean puntosPendientes = false;
+        for (Personaje p : juego.getParty().getMiembros()) {
+            if (p.getPuntosAtributoDisponibles() > 0 || p.puedeAprenderHabilidad()) {
+                puntosPendientes = true;
+                break;
+            }
+        }
+
         MapaDTO mapaDTO = new MapaDTO(mapa.getPiso(), mapa.getIdNodoActual(), nodosDTO);
-        vista.actualizarMapa(mapaDTO, 0);
+        vista.actualizarMapa(mapaDTO, juego.getParty().getOro(), puntosPendientes);
         vista.mostrarPantalla("MAPA");
     }
 
-    /**
-     * El jugador seleccionó un nodo del mapa.
-     * Se bloquean las rutas alternativas y se transiciona polimórficamente a la vista correspondiente
-     * mediante el patrón Visitor / Double Dispatch (sin condicionales ni comprobación de tipo).
-     */
     public void seleccionarNodo(int idNodo) {
         boolean exito = juego.seleccionarNodo(idNodo);
         if (!exito) return;
@@ -121,13 +173,41 @@ public class ControladorJuego implements NodoVisitor {
         vista.mostrarPantalla("DESCANSO");
     }
 
-    // ─── Fin de combate ───────────────────────────────────────────────────────────
+    @Override
+    public void visitarKiosco(NodoKiosco nodo) {
+        vista.actualizarKiosco(juego.getParty());
+        vista.mostrarPantalla("KIOSCO");
+    }
 
-    /**
-     * Procesa el fin del combate:
-     * - Victoria: calcula recompensa con {@code calcularRecompensa()} → {@link RecompensaDTO}
-     * - Derrota: permadeath (borra guardado)
-     */
+    // ─── Kiosco ───────────────────────────────────────────────────────────────────
+
+    public void comprarItemKiosco(Item item) {
+        boolean exito = juego.comprarItem(item);
+        if (!exito) {
+            JOptionPane.showMessageDialog(vista,
+                    "No tenés suficiente oro o el inventario está lleno.",
+                    "Kiosco", JOptionPane.WARNING_MESSAGE);
+        }
+        vista.actualizarKiosco(juego.getParty());
+    }
+
+    public void venderItemKiosco(Item item) {
+        boolean exito = juego.venderItem(item);
+        if (!exito) {
+            JOptionPane.showMessageDialog(vista,
+                    "No se pudo vender el objeto.",
+                    "Kiosco", JOptionPane.WARNING_MESSAGE);
+        }
+        vista.actualizarKiosco(juego.getParty());
+    }
+
+    public void completarKioscoYVolver() {
+        juego.completarNodoActual();
+        volverAlMapa();
+    }
+
+    // ─── Fin de Combate ───────────────────────────────────────────────────────────
+
     public void procesarFinDeCombate(boolean victoria) {
         Batalla batalla = juego.getBatallaActual();
 
@@ -135,29 +215,59 @@ public class ControladorJuego implements NodoVisitor {
             juego.completarNodoActual();
             RecompensaDTO recompensa = batalla.calcularRecompensa();
             EstadoBatallaDTO estadoDTO = batalla.crearEstadoDTO();
-            vista.actualizarResultados(estadoDTO, recompensa);
+            vista.actualizarResultados(estadoDTO, recompensa, juego);
         } else {
-            // Permadeath: borrar el guardado
             GestorPersistencia.borrarPartidaPorPermadeath();
             EstadoBatallaDTO estadoDTO = batalla.crearEstadoDTO();
-            vista.actualizarResultados(estadoDTO, null);
+            vista.actualizarResultados(estadoDTO, null, juego);
         }
         vista.mostrarPantalla("RESULTADOS");
     }
 
-    // ─── Pantalla Party / Inventario ──────────────────────────────────────────────
+    public void volverAlMapaOATorre() {
+        continuarDesdeResultados();
+    }
+
+    public void continuarDesdeResultados() {
+        if (!juego.getParty().estaDerrotada() && juego.isJuegoCompletadoVictoria()) {
+            mostrarPantallaInicio();
+            return;
+        }
+
+        if (juego.getParty().estaDerrotada()) {
+            mostrarPantallaInicio();
+            return;
+        }
+
+        if (juego.getMapa().isJefePisoCompletado()) {
+            mostrarPantallaTorre();
+        } else {
+            volverAlMapa();
+        }
+    }
+
+    // ─── Pantalla Party / Gestión y Progreso ──────────────────────────────────────
 
     public void abrirGestionParty() {
         Party party = juego.getParty();
         List<PersonajeDTO> heroesDTO = construirHeroesDTO(party);
 
-        List<ItemDTO> armasDTO    = construirArmasDTO(party);
+        List<ItemDTO> armasDTO     = construirArmasDTO(party);
         List<ItemDTO> armadurasDTO = construirArmadurasDTO(party);
         List<ItemDTO> consumiblesDTO = construirConsumiblesDTO(party);
 
-        PartyGestionDTO dto = new PartyGestionDTO(heroesDTO, armasDTO, armadurasDTO, consumiblesDTO, 0);
-        vista.actualizarGestionParty(dto);
+        PartyGestionDTO dto = new PartyGestionDTO(heroesDTO, armasDTO, armadurasDTO, consumiblesDTO, party.getOro());
+        vista.actualizarGestionParty(dto, party);
         vista.mostrarPantalla("PARTY");
+    }
+
+    public void desbloquearHabilidadHeroe(int indiceHeroe, Habilidad h) {
+        Party party = juego.getParty();
+        if (indiceHeroe >= 0 && indiceHeroe < party.getMiembros().size()) {
+            Personaje p = party.getMiembros().get(indiceHeroe);
+            p.aprenderHabilidad(h);
+            abrirGestionParty();
+        }
     }
 
     private List<PersonajeDTO> construirHeroesDTO(Party party) {
@@ -180,7 +290,7 @@ public class ControladorJuego implements NodoVisitor {
         List<ItemDTO> lista = new ArrayList<>();
         for (Arma a : party.getInventario().getArmas()) {
             int idx = party.getInventario().getItems().indexOf(a);
-            lista.add(new ItemDTO(idx, a.getNombre(), "+" + a.getBonusAtaque() + " ATQ", false));
+            lista.add(new ItemDTO(idx, a.getNombre(), "+" + a.getBonusAtaque() + " ATQ | Valor: $" + a.getPrecioVenta(), false));
         }
         return lista;
     }
@@ -189,7 +299,7 @@ public class ControladorJuego implements NodoVisitor {
         List<ItemDTO> lista = new ArrayList<>();
         for (Armadura arm : party.getInventario().getArmaduras()) {
             int idx = party.getInventario().getItems().indexOf(arm);
-            lista.add(new ItemDTO(idx, arm.getNombre(), "+" + arm.getBonusDefensa() + " DEF", false));
+            lista.add(new ItemDTO(idx, arm.getNombre(), "+" + arm.getBonusDefensa() + " DEF | Valor: $" + arm.getPrecioVenta(), false));
         }
         return lista;
     }
@@ -198,12 +308,12 @@ public class ControladorJuego implements NodoVisitor {
         List<ItemDTO> lista = new ArrayList<>();
         for (Consumible c : party.getInventario().getConsumibles()) {
             int idx = party.getInventario().getItems().indexOf(c);
-            lista.add(new ItemDTO(idx, c.getNombre(), c.getDescripcion(), true));
+            lista.add(new ItemDTO(idx, c.getNombre(), c.getDescripcion() + " | Valor: $" + c.getPrecioVenta(), true));
         }
         return lista;
     }
 
-    // ─── Atributos ────────────────────────────────────────────────────────────────
+    // ─── Asignación de Atributos ──────────────────────────────────────────────────
 
     public void asignarPuntoAtributo(int indiceHeroe, String stat) {
         Party party = juego.getParty();
@@ -219,7 +329,7 @@ public class ControladorJuego implements NodoVisitor {
         abrirGestionParty();
     }
 
-    // ─── Equipo ───────────────────────────────────────────────────────────────────
+    // ─── Gestión de Equipo ────────────────────────────────────────────────────────
 
     public void equiparArma(int indiceHeroe, int indiceItemInventario) {
         Party party = juego.getParty();
@@ -263,7 +373,7 @@ public class ControladorJuego implements NodoVisitor {
         abrirGestionParty();
     }
 
-    // ─── Eventos y Fogata ─────────────────────────────────────────────────────────
+    // ─── Eventos y Fogón ──────────────────────────────────────────────────────────
 
     public String resolverEvento(int opcion) {
         return juego.resolverEventoActual(opcion);
@@ -273,13 +383,7 @@ public class ControladorJuego implements NodoVisitor {
         return juego.descansarEnFogata(opcion);
     }
 
-    // ─── Guardado ─────────────────────────────────────────────────────────────────
-
-    public void guardarPartida() {
-        boolean exito = GestorPersistencia.guardarPartida(juego);
-        String msg = exito
-                ? "✅ Partida guardada correctamente."
-                : "❌ No se pudo guardar la partida.";
-        javax.swing.JOptionPane.showMessageDialog(null, msg, "Guardar", javax.swing.JOptionPane.INFORMATION_MESSAGE);
+    public Juego getJuego() {
+        return juego;
     }
 }

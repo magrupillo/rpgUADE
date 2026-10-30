@@ -31,7 +31,15 @@ public class PartyGestionDTO {
         return inventarioArmas;
     }
 
+    public List<ItemDTO> getArmasDisponibles() {
+        return inventarioArmas;
+    }
+
     public List<ItemDTO> getInventarioArmaduras() {
+        return inventarioArmaduras;
+    }
+
+    public List<ItemDTO> getArmadurasDisponibles() {
         return inventarioArmaduras;
     }
 
@@ -39,7 +47,15 @@ public class PartyGestionDTO {
         return inventarioConsumibles;
     }
 
+    public List<ItemDTO> getConsumiblesDisponibles() {
+        return inventarioConsumibles;
+    }
+
     public int getMetaPuntos() {
+        return metaPuntos;
+    }
+
+    public int getOro() {
         return metaPuntos;
     }
 }

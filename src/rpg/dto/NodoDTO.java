@@ -13,10 +13,11 @@ public class NodoDTO {
     private final boolean completado;
     private final boolean disponible;
     private final boolean esActual;
+    private final boolean revelado;
     private final List<Integer> conexiones;
 
     public NodoDTO(int id, int columna, String nombre, String tipo, String icono,
-                   boolean completado, boolean disponible, boolean esActual, List<Integer> conexiones) {
+                   boolean completado, boolean disponible, boolean esActual, boolean revelado, List<Integer> conexiones) {
         this.id = id;
         this.columna = columna;
         this.nombre = nombre;
@@ -25,7 +26,18 @@ public class NodoDTO {
         this.completado = completado;
         this.disponible = disponible;
         this.esActual = esActual;
+        this.revelado = revelado;
         this.conexiones = conexiones != null ? Collections.unmodifiableList(new ArrayList<>(conexiones)) : Collections.emptyList();
+    }
+
+    public NodoDTO(int id, int columna, String nombre, String tipo, String icono,
+                   boolean completado, boolean disponible, boolean esActual, List<Integer> conexiones, boolean revelado) {
+        this(id, columna, nombre, tipo, icono, completado, disponible, esActual, revelado, conexiones);
+    }
+
+    public NodoDTO(int id, int columna, String nombre, String tipo, String icono,
+                   boolean completado, boolean disponible, boolean esActual, List<Integer> conexiones) {
+        this(id, columna, nombre, tipo, icono, completado, disponible, esActual, true, conexiones);
     }
 
     public int getId() {
@@ -58,6 +70,10 @@ public class NodoDTO {
 
     public boolean isEsActual() {
         return esActual;
+    }
+
+    public boolean isRevelado() {
+        return revelado;
     }
 
     public List<Integer> getConexiones() {

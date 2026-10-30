@@ -9,4 +9,5 @@ public interface NodoVisitor {
     void visitarCombate(Nodo nodo);
     void visitarEvento(NodoEvento nodo);
     void visitarFogata(NodoFogata nodo);
+    void visitarKiosco(NodoKiosco nodo);
 }

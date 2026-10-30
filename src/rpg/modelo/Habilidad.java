@@ -4,38 +4,59 @@ import java.io.Serializable;
 import java.util.List;
 
 /**
- * Clase abstracta que representa una habilidad especial de un {@link Personaje}.
- * Cada subclase de Personaje posee una instancia de Habilidad.
- *
- * El método {@link #ejecutar(List, Batalla)} recibe una lista de objetivos en lugar de
- * un único combatiente, lo que permite resolver ataques y curaciones en área.
+ * Clase base abstracta para habilidades de combate (Clase 8 - Polimorfismo).
+ * Define el tipo de objetivo para que la batalla resuelva objetivos sin condicionales de tipo.
  */
 public abstract class Habilidad implements Serializable {
 
-    private final String nombre;
-    private final int costeMana;
+    private static final long serialVersionUID = 1L;
 
-    public Habilidad(String nombre, int costeMana) {
+    private final String nombre;
+    private final String descripcion;
+    private final int costeMana;
+    private final TipoObjetivo tipoObjetivo;
+
+    public Habilidad(String nombre, String descripcion, int costeMana, TipoObjetivo tipoObjetivo) {
         this.nombre = nombre;
+        this.descripcion = descripcion;
         this.costeMana = costeMana;
+        this.tipoObjetivo = tipoObjetivo;
     }
 
     public String getNombre() {
         return nombre;
     }
 
+    public String getDescripcion() {
+        return descripcion;
+    }
+
     public int getCosteMana() {
         return costeMana;
     }
 
+    public TipoObjetivo getTipoObjetivo() {
+        return tipoObjetivo;
+    }
+
+    public boolean esObjetivoMultiple() {
+        return tipoObjetivo == TipoObjetivo.ENEMIGOS_TODOS || tipoObjetivo == TipoObjetivo.ALIADOS_TODOS;
+    }
+
+    public boolean apuntaAliados() {
+        return tipoObjetivo == TipoObjetivo.ALIADO_INDIVIDUAL
+                || tipoObjetivo == TipoObjetivo.ALIADO_MAS_HERIDO
+                || tipoObjetivo == TipoObjetivo.ALIADOS_TODOS
+                || tipoObjetivo == TipoObjetivo.PROPIO;
+    }
+
     /**
      * Ejecuta la habilidad sobre la lista de objetivos.
-     * La lista puede contener uno o varios {@link Combatiente}s (área).
      *
-     * @param lanzador  el {@link Personaje} que usa la habilidad
-     * @param objetivos lista de combatientes afectados (aliados o enemigos)
-     * @param batalla   contexto de la batalla actual
-     * @return {@code true} si la habilidad se ejecutó con éxito
+     * @param lanzador  héroe que usa la habilidad
+     * @param objetivos lista de combatientes afectados
+     * @param batalla   contexto de la batalla
+     * @return true si se ejecutó con éxito
      */
     public abstract boolean ejecutar(Personaje lanzador, List<Combatiente> objetivos, Batalla batalla);
 

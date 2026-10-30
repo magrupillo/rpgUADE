@@ -1,64 +1,69 @@
 package rpg.modelo;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class Guerrero extends Personaje {
+
+    private static final long serialVersionUID = 1L;
 
     private int fuerza;
 
     public Guerrero(String nombre) {
-        super(nombre, 220, 50, 1, 25, 15, 12);
-        this.fuerza = 20;
+        super(nombre, 210, 45, 1, 26, 14, 12);
+        this.fuerza = 15;
+        inicializarCatalogoHabilidades();
     }
 
-    public Guerrero(String nombre, int vida, int mana, int nivel, int ataque, int defensa, int velocidad, int fuerza) {
-        super(nombre, vida, mana, nivel, ataque, defensa, velocidad);
-        this.fuerza = fuerza;
+    public Guerrero() {
+        this("Kratos");
     }
 
-    public int getFuerza() { return fuerza; }
-
-    /** El Guerrero tiene probabilidad de crítico ligeramente mayor. */
-    @Override
-    protected double getCriticoBonus() { return 0.05; }
+    public int getFuerza() {
+        return fuerza;
+    }
 
     @Override
-    public List<Habilidad> getHabilidades() {
-        int fuerzaCaptura = this.fuerza;
-        List<Habilidad> habs = new ArrayList<>();
+    public double getCriticoBonus() {
+        return 0.05;
+    }
 
-        // Habilidad 0: Golpe Devastador (mono-objetivo)
-        habs.add(new Habilidad("💥 Golpe Devastador", 20) {
-            @Override
-            public boolean ejecutar(Personaje lanzador, List<Combatiente> objetivos, Batalla batalla) {
-                if (!lanzador.gastarMana(getCosteMana())) return false;
-                if (objetivos == null || objetivos.isEmpty()) {
-                    RegistroCombate.registrar(lanzador.getNombre() + " necesita un objetivo.");
-                    return false;
-                }
-                Combatiente objetivo = objetivos.get(0);
-                int danio = (lanzador.getAtaque() + fuerzaCaptura) * lanzador.getNivel();
-                RegistroCombate.registrar("💥 ¡" + lanzador.getNombre()
-                        + " ejecuta Golpe Devastador contra " + objetivo.getNombre() + "!");
-                objetivo.recibirDanio(danio);
-                return true;
-            }
-        });
+    @Override
+    protected void inicializarCatalogoHabilidades() {
+        catalogoHabilidades.clear();
+        habilidadesDesbloqueadas.clear();
 
-        // Habilidad 1: Provocar / Guardia (sin objetivo)
-        habs.add(new Habilidad("🛡️ Provocar / Guardia", 15) {
-            @Override
-            public boolean ejecutar(Personaje lanzador, List<Combatiente> objetivos, Batalla batalla) {
-                if (!lanzador.gastarMana(getCosteMana())) return false;
-                lanzador.setProvocando(true);
-                lanzador.defender();
-                RegistroCombate.registrar("🛡️ ¡" + lanzador.getNombre()
-                        + " activa PROVOCAR! Ruge desafiante y atrae la atención de todos los enemigos.");
-                return true;
-            }
-        });
+        // 1. Ira de los Dioses (Default): taunt y defensa férrea
+        Habilidad iraDioses = new HabilidadDeEstado(
+                "Ira de los Dioses",
+                "Kratos ruge con furor espartano: obliga a los enemigos a atacarlo y adopta postura defensiva.",
+                15,
+                TipoObjetivo.PROPIO,
+                HabilidadDeEstado.EfectoEstado.PROVOCAR_Y_GUARDIA
+        );
 
-        return habs;
+        // 2. Espadas del Caos: ataque en área
+        Habilidad espadasCaos = new HabilidadOfensiva(
+                "Espadas del Caos",
+                "Gira sus cadenas incandescentes causando daño cortante y quemaduras a todos los enemigos.",
+                25,
+                TipoObjetivo.ENEMIGOS_TODOS,
+                1.3,
+                false
+        );
+
+        // 3. Hacha Leviatán: ataque directo brutal
+        Habilidad hachaLeviatan = new HabilidadOfensiva(
+                "Hacha Leviatán",
+                "Arroja el hacha imbuida de escarcha helada asestando un impacto demoledor a un enemigo.",
+                22,
+                TipoObjetivo.ENEMIGO_INDIVIDUAL,
+                2.2,
+                false
+        );
+
+        catalogoHabilidades.add(iraDioses);
+        catalogoHabilidades.add(espadasCaos);
+        catalogoHabilidades.add(hachaLeviatan);
+
+        // Comienza con la primera habilidad por defecto
+        habilidadesDesbloqueadas.add(iraDioses);
     }
 }

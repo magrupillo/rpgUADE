@@ -3,6 +3,7 @@ package rpg.vista;
 import rpg.controlador.ControladorJuego;
 import rpg.dto.EventoDTO;
 import rpg.util.EstilosUI;
+import rpg.util.GestorRecursos;
 
 import javax.swing.*;
 import java.awt.*;
@@ -29,7 +30,7 @@ public class PantallaEvento extends JPanel {
         ));
         panelCentral.setPreferredSize(new Dimension(650, 480));
 
-        lblTitulo = new JLabel("📜 EVENTO MISTERIOSO", SwingConstants.CENTER);
+        lblTitulo = new JLabel("EVENTO EN EL CAMINO", SwingConstants.CENTER);
         lblTitulo.setFont(EstilosUI.FUENTE_TITULO);
         lblTitulo.setForeground(EstilosUI.COLOR_ORO);
         lblTitulo.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -53,7 +54,7 @@ public class PantallaEvento extends JPanel {
 
         panelCentral.add(Box.createVerticalStrut(20));
 
-        btnOpcionA = EstilosUI.crearBoton("Opción A", new Color(142, 68, 173), new Color(155, 89, 182));
+        btnOpcionA = EstilosUI.crearBoton("Opcion 1", new Color(142, 68, 173), new Color(155, 89, 182));
         btnOpcionA.setFont(new Font("Segoe UI", Font.BOLD, 13));
         btnOpcionA.setMaximumSize(new Dimension(580, 42));
         btnOpcionA.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -62,7 +63,7 @@ public class PantallaEvento extends JPanel {
 
         panelCentral.add(Box.createVerticalStrut(10));
 
-        btnOpcionB = EstilosUI.crearBoton("Opción B", new Color(52, 73, 94), new Color(70, 95, 120));
+        btnOpcionB = EstilosUI.crearBoton("Opcion 2", new Color(52, 73, 94), new Color(70, 95, 120));
         btnOpcionB.setFont(new Font("Segoe UI", Font.BOLD, 13));
         btnOpcionB.setMaximumSize(new Dimension(580, 42));
         btnOpcionB.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -80,7 +81,7 @@ public class PantallaEvento extends JPanel {
 
         panelCentral.add(Box.createVerticalStrut(10));
 
-        btnContinuar = EstilosUI.crearBoton("🗺️ Continuar al Mapa", new Color(39, 174, 96), new Color(46, 204, 113));
+        btnContinuar = EstilosUI.crearBoton("Continuar al Mapa", new Color(39, 174, 96), new Color(46, 204, 113));
         btnContinuar.setMaximumSize(new Dimension(280, 40));
         btnContinuar.setAlignmentX(Component.CENTER_ALIGNMENT);
         btnContinuar.setVisible(false);
@@ -90,6 +91,19 @@ public class PantallaEvento extends JPanel {
         panelCentral.add(btnContinuar);
 
         add(panelCentral);
+    }
+
+    @Override
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        Image fondo = GestorRecursos.obtenerFondo("otro");
+        if (fondo != null) {
+            g.drawImage(fondo, 0, 0, getWidth(), getHeight(), this);
+            Graphics2D g2 = (Graphics2D) g.create();
+            g2.setColor(new Color(15, 18, 25, 205));
+            g2.fillRect(0, 0, getWidth(), getHeight());
+            g2.dispose();
+        }
     }
 
     public void setControlador(ControladorJuego controlador) {

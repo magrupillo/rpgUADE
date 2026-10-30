@@ -6,6 +6,8 @@ package rpg.modelo;
  */
 public class NodoEvento extends Nodo {
 
+    private static final long serialVersionUID = 1L;
+
     private final EventoAleatorio evento;
 
     public NodoEvento(int id, int columna, String nombre, EventoAleatorio evento) {

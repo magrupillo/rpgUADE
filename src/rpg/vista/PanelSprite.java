@@ -1,7 +1,6 @@
 package rpg.vista;
 
 import rpg.dto.EntidadDTO;
-import rpg.dto.PersonajeDTO;
 import rpg.util.EstilosUI;
 import rpg.util.GestorRecursos;
 
@@ -10,22 +9,20 @@ import java.awt.*;
 
 /**
  * Panel visual para cada entidad en la escena de batalla.
- * Muestra: sprite con aura de turno, nombre, mini barras HP/MP,
- * e indicadores de estados (Defendiendo, Envenenado, Aturdido, Provocando).
+ * Muestra el sprite (con Bowser más grande), barras de HP/MP, y badges de estado legibles sin emojis rotos.
  */
 public class PanelSprite extends JPanel {
+
     private final EntidadDTO entidad;
     private final boolean esTurnoActivo;
     private final int spriteTam;
 
     public PanelSprite(EntidadDTO entidad, boolean esTurnoActivo) {
-        this(entidad, esTurnoActivo, 80);
-    }
-
-    public PanelSprite(EntidadDTO entidad, boolean esTurnoActivo, int tamano) {
         this.entidad = entidad;
         this.esTurnoActivo = esTurnoActivo;
-        this.spriteTam = tamano;
+        // Si es el Jefe (Bowser), renderizar sprite significativamente más grande
+        boolean esJefe = entidad.getTipo().equalsIgnoreCase("jefe") || entidad.getNombre().toLowerCase().contains("bowser");
+        this.spriteTam = esJefe ? 115 : 80;
 
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         setOpaque(false);
@@ -35,20 +32,20 @@ public class PanelSprite extends JPanel {
     }
 
     private void construirVista() {
-        // 1. Etiqueta con el nombre y nivel
+        // 1. Nombre y Nivel
         String etiquetaTxt = entidad.getNombre();
         if (entidad.getNivel() > 1) {
             etiquetaTxt += " Nv." + entidad.getNivel();
         }
         JLabel lblNombre = new JLabel(etiquetaTxt);
         lblNombre.setAlignmentX(Component.CENTER_ALIGNMENT);
-        lblNombre.setFont(new Font("Segoe UI", Font.BOLD, 11));
+        lblNombre.setFont(new Font("Segoe UI", Font.BOLD, 12));
         lblNombre.setForeground(entidad.isEstaVivo() ? EstilosUI.TEXTO_CLARO : EstilosUI.TEXTO_MUTED);
         add(lblNombre);
 
-        add(Box.createVerticalStrut(3));
+        add(Box.createVerticalStrut(4));
 
-        // 2. Avatar / Icono del Sprite (renderizado custom con indicadores)
+        // 2. Avatar / Icono del Sprite
         JPanel avatarPanel = new JPanel() {
             @Override
             protected void paintComponent(Graphics g) {
@@ -59,148 +56,107 @@ public class PanelSprite extends JPanel {
                 int w = getWidth();
                 int h = getHeight();
 
-                // Dibujar Sprite
                 Image img = GestorRecursos.obtenerSprite(entidad.getTipo(), spriteTam, spriteTam);
                 int ix = (w - spriteTam) / 2;
                 int iy = (h - spriteTam) / 2;
 
                 if (!entidad.isEstaVivo()) {
-                    // Efecto de desvanecimiento / caído
                     Composite original = g2.getComposite();
-                    g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.3f));
+                    g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.35f));
                     g2.drawImage(img, ix, iy, this);
                     g2.setComposite(original);
 
                     // Cruz roja de caído
-                    g2.setColor(new Color(231, 76, 60, 200));
+                    g2.setColor(new Color(231, 76, 60, 220));
                     g2.setStroke(new BasicStroke(3, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
-                    g2.drawLine(ix + 15, iy + 15, ix + spriteTam - 15, iy + spriteTam - 15);
-                    g2.drawLine(ix + spriteTam - 15, iy + 15, ix + 15, iy + spriteTam - 15);
+                    g2.drawLine(ix + 12, iy + 12, ix + spriteTam - 12, iy + spriteTam - 12);
+                    g2.drawLine(ix + spriteTam - 12, iy + 12, ix + 12, iy + spriteTam - 12);
                 } else {
                     g2.drawImage(img, ix, iy, this);
                 }
 
-                // Si es el turno activo, dibujar aura dorada con resplandor
+                // Resplandor dorado si es el turno activo
                 if (esTurnoActivo && entidad.isEstaVivo()) {
-                    g2.setColor(new Color(241, 196, 15, 50));
-                    g2.fillRoundRect(ix - 6, iy - 6, spriteTam + 12, spriteTam + 12, 18, 18);
-                    g2.setColor(new Color(241, 196, 15, 230));
+                    g2.setColor(new Color(241, 196, 15, 60));
+                    g2.fillRoundRect(ix - 6, iy - 6, spriteTam + 12, spriteTam + 12, 16, 16);
+                    g2.setColor(new Color(241, 196, 15, 240));
                     g2.setStroke(new BasicStroke(3));
-                    g2.drawRoundRect(ix - 4, iy - 4, spriteTam + 8, spriteTam + 8, 16, 16);
+                    g2.drawRoundRect(ix - 4, iy - 4, spriteTam + 8, spriteTam + 8, 14, 14);
                 }
 
-                // ── Indicadores de Estado (badges en las esquinas) ──
+                // Badges de estado legibles con texto limpio (sin emojis rotos)
                 if (entidad.isEstaVivo()) {
-                    int badgeSize = 18;
+                    int badgeW = 34;
+                    int badgeH = 16;
                     int badgeY = iy;
-                    int badgeX = ix + spriteTam - badgeSize + 2;
+                    int badgeX = ix + spriteTam - badgeW + 4;
 
-                    // Defendiendo: escudo azul
                     if (entidad.isDefendiendo()) {
-                        dibujarBadge(g2, badgeX, badgeY, badgeSize, new Color(52, 152, 219, 230), "🛡");
-                        badgeY += badgeSize + 2;
+                        dibujarBadgeTexto(g2, badgeX, badgeY, badgeW, badgeH, new Color(52, 152, 219, 230), "DEF");
+                        badgeY += badgeH + 2;
                     }
-
-                    // Verificar estados adicionales solo para PersonajeDTO (héroes)
-                    if (entidad instanceof PersonajeDTO) {
-                        // No hay flags directas en DTO para veneno/aturdido, pero los podemos inferir visualmente
-                        // La vista utiliza la info del DTO — los estados se muestran desde el nombre del turno
+                    if (entidad.isEnvenenado()) {
+                        dibujarBadgeTexto(g2, badgeX, badgeY, badgeW, badgeH, new Color(142, 68, 173, 230), "VEN");
+                        badgeY += badgeH + 2;
+                    }
+                    if (entidad.isAturdido()) {
+                        dibujarBadgeTexto(g2, badgeX, badgeY, badgeW, badgeH, new Color(243, 156, 18, 230), "ATUR");
+                        badgeY += badgeH + 2;
+                    }
+                    if (entidad.isProvocando()) {
+                        dibujarBadgeTexto(g2, badgeX, badgeY, badgeW, badgeH, new Color(230, 126, 34, 230), "PROV");
                     }
                 }
 
                 g2.dispose();
             }
+
+            private void dibujarBadgeTexto(Graphics2D g2, int x, int y, int w, int h, Color colorFondo, String txt) {
+                g2.setColor(colorFondo);
+                g2.fillRoundRect(x, y, w, h, 6, 6);
+                g2.setColor(Color.WHITE);
+                g2.setFont(new Font("Segoe UI", Font.BOLD, 9));
+                FontMetrics fm = g2.getFontMetrics();
+                int tx = x + (w - fm.stringWidth(txt)) / 2;
+                int ty = y + ((h - fm.getHeight()) / 2) + fm.getAscent();
+                g2.drawString(txt, tx, ty);
+            }
         };
 
-        int panelSize = spriteTam + 16;
-        avatarPanel.setPreferredSize(new Dimension(panelSize, panelSize));
-        avatarPanel.setMaximumSize(new Dimension(panelSize, panelSize));
-        avatarPanel.setMinimumSize(new Dimension(panelSize, panelSize));
-        avatarPanel.setOpaque(false);
+        avatarPanel.setPreferredSize(new Dimension(spriteTam + 24, spriteTam + 16));
+        avatarPanel.setMaximumSize(new Dimension(spriteTam + 30, spriteTam + 20));
         avatarPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        avatarPanel.setOpaque(false);
         add(avatarPanel);
 
-        add(Box.createVerticalStrut(3));
+        add(Box.createVerticalStrut(4));
 
-        // 3. Mini barra de HP
-        JProgressBar miniBarraHp = new JProgressBar(0, Math.max(1, entidad.getVidaMaxima()));
-        miniBarraHp.setValue(entidad.getVidaActual());
-        miniBarraHp.setStringPainted(true);
-        miniBarraHp.setString(entidad.getVidaActual() + "/" + entidad.getVidaMaxima());
-        miniBarraHp.setFont(new Font("Segoe UI", Font.BOLD, 9));
-        miniBarraHp.setPreferredSize(new Dimension(spriteTam + 10, 14));
-        miniBarraHp.setMaximumSize(new Dimension(spriteTam + 10, 14));
-        miniBarraHp.setAlignmentX(Component.CENTER_ALIGNMENT);
+        // 3. Barra de HP
+        int vidaActual = Math.max(0, entidad.getVida());
+        int vidaMax = Math.max(1, entidad.getVidaMaxima());
+        JProgressBar barraHp = EstilosUI.crearBarra(0, vidaMax,
+                (vidaActual < vidaMax * 0.3) ? EstilosUI.COLOR_VIDA_BAJA : EstilosUI.COLOR_VIDA);
+        barraHp.setValue(vidaActual);
+        barraHp.setString("HP: " + vidaActual + "/" + vidaMax);
+        barraHp.setFont(new Font("Segoe UI", Font.BOLD, 10));
+        barraHp.setPreferredSize(new Dimension(spriteTam + 20, 15));
+        barraHp.setMaximumSize(new Dimension(spriteTam + 24, 15));
+        barraHp.setAlignmentX(Component.CENTER_ALIGNMENT);
+        add(barraHp);
 
-        if (entidad.isEstaVivo()) {
-            double hpRatio = (double) entidad.getVidaActual() / Math.max(1, entidad.getVidaMaxima());
-            if (hpRatio < 0.3) {
-                miniBarraHp.setForeground(EstilosUI.COLOR_VIDA_BAJA);
-            } else if (entidad.isEsHeroe()) {
-                miniBarraHp.setForeground(EstilosUI.COLOR_VIDA);
-            } else {
-                miniBarraHp.setForeground(new Color(192, 57, 43));
-            }
-        } else {
-            miniBarraHp.setForeground(Color.GRAY);
-            miniBarraHp.setString("CAÍDO");
-        }
-        miniBarraHp.setBackground(new Color(25, 27, 36));
-        miniBarraHp.setBorder(BorderFactory.createLineBorder(EstilosUI.BORDE_SUAVE, 1));
-        add(miniBarraHp);
-
-        // 4. Mini barra de MP solo para héroes
-        if (entidad.isEsHeroe() && entidad.getManaMaximo() > 0 && entidad.isEstaVivo()) {
+        // 4. Barra de MP (para héroes)
+        if (entidad.getManaMaximo() > 0) {
             add(Box.createVerticalStrut(2));
-            JProgressBar miniBarraMp = new JProgressBar(0, Math.max(1, entidad.getManaMaximo()));
-            miniBarraMp.setValue(entidad.getManaActual());
-            miniBarraMp.setStringPainted(true);
-            miniBarraMp.setString(entidad.getManaActual() + "/" + entidad.getManaMaximo());
-            miniBarraMp.setFont(new Font("Segoe UI", Font.BOLD, 9));
-            miniBarraMp.setPreferredSize(new Dimension(spriteTam + 10, 12));
-            miniBarraMp.setMaximumSize(new Dimension(spriteTam + 10, 12));
-            miniBarraMp.setAlignmentX(Component.CENTER_ALIGNMENT);
-            miniBarraMp.setForeground(EstilosUI.COLOR_MANA);
-            miniBarraMp.setBackground(new Color(25, 27, 36));
-            miniBarraMp.setBorder(BorderFactory.createLineBorder(EstilosUI.BORDE_SUAVE, 1));
-            add(miniBarraMp);
+            int manaActual = Math.max(0, entidad.getMana());
+            int manaMax = Math.max(1, entidad.getManaMaximo());
+            JProgressBar barraMp = EstilosUI.crearBarra(0, manaMax, EstilosUI.COLOR_MANA);
+            barraMp.setValue(manaActual);
+            barraMp.setString("MP: " + manaActual + "/" + manaMax);
+            barraMp.setFont(new Font("Segoe UI", Font.BOLD, 10));
+            barraMp.setPreferredSize(new Dimension(spriteTam + 20, 13));
+            barraMp.setMaximumSize(new Dimension(spriteTam + 24, 13));
+            barraMp.setAlignmentX(Component.CENTER_ALIGNMENT);
+            add(barraMp);
         }
-
-        // 5. Indicador de estado de turno
-        if (esTurnoActivo && entidad.isEstaVivo()) {
-            JLabel lblTurno = new JLabel("▶ TURNO");
-            lblTurno.setFont(new Font("Segoe UI", Font.BOLD, 9));
-            lblTurno.setForeground(EstilosUI.COLOR_ORO);
-            lblTurno.setAlignmentX(Component.CENTER_ALIGNMENT);
-            add(Box.createVerticalStrut(2));
-            add(lblTurno);
-        }
-
-        // 6. Indicadores de estado debajo del sprite
-        if (entidad.isEstaVivo() && entidad.isDefendiendo()) {
-            JLabel lblDef = new JLabel("🛡 DEF");
-            lblDef.setFont(new Font("Segoe UI", Font.BOLD, 9));
-            lblDef.setForeground(new Color(52, 152, 219));
-            lblDef.setAlignmentX(Component.CENTER_ALIGNMENT);
-            add(lblDef);
-        }
-    }
-
-    /** Dibuja un badge circular con un emoji en la esquina del sprite */
-    private void dibujarBadge(Graphics2D g2, int x, int y, int size, Color bg, String icono) {
-        g2.setColor(bg);
-        g2.fillRoundRect(x, y, size, size, 6, 6);
-        g2.setColor(Color.WHITE);
-        g2.setFont(new Font("Segoe UI", Font.PLAIN, 10));
-        FontMetrics fm = g2.getFontMetrics();
-        g2.drawString(icono, x + (size - fm.stringWidth(icono)) / 2, y + size - 4);
-    }
-
-    @Override
-    public Dimension getPreferredSize() {
-        // Let the layout manager compute height from children, but set a consistent width
-        Dimension d = super.getPreferredSize();
-        int width = Math.max(spriteTam + 28, d.width);
-        return new Dimension(width, d.height);
     }
 }

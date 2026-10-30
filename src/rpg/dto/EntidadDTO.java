@@ -19,11 +19,14 @@ public class EntidadDTO {
     private final boolean defendiendo;
     private final String rutaSprite;
     private final boolean esHeroe;
+    private final boolean envenenado;
+    private final boolean aturdido;
+    private final boolean provocando;
 
     public EntidadDTO(String nombre, String tipo, int vidaActual, int vidaMaxima,
                       int manaActual, int manaMaximo, int nivel, int ataque,
                       int defensa, int velocidad, boolean estaVivo, boolean defendiendo,
-                      String rutaSprite, boolean esHeroe) {
+                      String rutaSprite, boolean esHeroe, boolean envenenado, boolean aturdido, boolean provocando) {
         this.nombre = nombre;
         this.tipo = tipo;
         this.vidaActual = vidaActual;
@@ -38,6 +41,17 @@ public class EntidadDTO {
         this.defendiendo = defendiendo;
         this.rutaSprite = rutaSprite;
         this.esHeroe = esHeroe;
+        this.envenenado = envenenado;
+        this.aturdido = aturdido;
+        this.provocando = provocando;
+    }
+
+    public EntidadDTO(String nombre, String tipo, int vidaActual, int vidaMaxima,
+                      int manaActual, int manaMaximo, int nivel, int ataque,
+                      int defensa, int velocidad, boolean estaVivo, boolean defendiendo,
+                      String rutaSprite, boolean esHeroe) {
+        this(nombre, tipo, vidaActual, vidaMaxima, manaActual, manaMaximo, nivel,
+             ataque, defensa, velocidad, estaVivo, defendiendo, rutaSprite, esHeroe, false, false, false);
     }
 
     public String getNombre() {
@@ -52,11 +66,19 @@ public class EntidadDTO {
         return vidaActual;
     }
 
+    public int getVida() {
+        return vidaActual;
+    }
+
     public int getVidaMaxima() {
         return vidaMaxima;
     }
 
     public int getManaActual() {
+        return manaActual;
+    }
+
+    public int getMana() {
         return manaActual;
     }
 
@@ -94,6 +116,18 @@ public class EntidadDTO {
 
     public boolean isEsHeroe() {
         return esHeroe;
+    }
+
+    public boolean isEnvenenado() {
+        return envenenado;
+    }
+
+    public boolean isAturdido() {
+        return aturdido;
+    }
+
+    public boolean isProvocando() {
+        return provocando;
     }
 
     @Override

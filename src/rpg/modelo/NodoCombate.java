@@ -1,10 +1,8 @@
 package rpg.modelo;
 
-/**
- * Nodo de combate estándar contra enemigos comunes.
- * Al ser visitado, genera una batalla con Goblin y Chamán.
- */
 public class NodoCombate extends Nodo {
+
+    private static final long serialVersionUID = 1L;
 
     public NodoCombate(int id, int columna, String nombre) {
         super(id, columna, nombre);
@@ -19,8 +17,8 @@ public class NodoCombate extends Nodo {
     @Override
     public void alVisitar(Juego juego) {
         Batalla b = new Batalla(getNombre(), juego.getParty());
-        b.agregarEnemigo(new Goblin("Goblin Pícaro"));
-        b.agregarEnemigo(new Chaman("Chamán del Pantano"));
+        b.agregarEnemigo(new Goblin("El Duende Verde"));
+        b.agregarEnemigo(new Chaman("Quan Chi"));
         b.calcularOrdenTurnos();
         juego.setBatallaActual(b);
         juego.setEventoActual(null);

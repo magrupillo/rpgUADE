@@ -27,7 +27,8 @@ public class Main {
                         break;
                     }
                 }
-            } catch (Exception ignored) {
+            } catch (Exception e) {
+                System.err.println("[Main] No se pudo inicializar LookAndFeel Nimbus, usando predeterminado: " + e.getMessage());
             }
 
             // 1. Instanciación del Modelo central

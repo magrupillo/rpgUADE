@@ -1,62 +1,64 @@
 package rpg.modelo;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class Mago extends Personaje {
+
+    private static final long serialVersionUID = 1L;
 
     private int inteligencia;
 
     public Mago(String nombre) {
-        super(nombre, 120, 120, 1, 15, 6, 16);
-        this.inteligencia = 30;
+        super(nombre, 140, 110, 1, 22, 8, 16);
+        this.inteligencia = 28;
+        inicializarCatalogoHabilidades();
     }
 
-    public Mago(String nombre, int vida, int mana, int nivel, int ataque, int defensa, int velocidad, int inteligencia) {
-        super(nombre, vida, mana, nivel, ataque, defensa, velocidad);
-        this.inteligencia = inteligencia;
+    public Mago() {
+        this("Goku");
     }
 
-    public int getInteligencia() { return inteligencia; }
+    public int getInteligencia() {
+        return inteligencia;
+    }
 
     @Override
-    public List<Habilidad> getHabilidades() {
-        int intelCaptura = this.inteligencia;
-        List<Habilidad> habs = new ArrayList<>();
+    protected void inicializarCatalogoHabilidades() {
+        catalogoHabilidades.clear();
+        habilidadesDesbloqueadas.clear();
 
-        // Habilidad 0: Bola de Fuego (mono-objetivo)
-        habs.add(new Habilidad("🔥 Bola de Fuego", 25) {
-            @Override
-            public boolean ejecutar(Personaje lanzador, List<Combatiente> objetivos, Batalla batalla) {
-                if (!lanzador.gastarMana(getCosteMana())) return false;
-                if (objetivos == null || objetivos.isEmpty()) {
-                    RegistroCombate.registrar(lanzador.getNombre() + " necesita un objetivo.");
-                    return false;
-                }
-                Combatiente objetivo = objetivos.get(0);
-                int danio = (lanzador.getAtaque() + intelCaptura) * lanzador.getNivel();
-                RegistroCombate.registrar("🔥 ¡" + lanzador.getNombre()
-                        + " lanza una abrasadora Bola de Fuego contra " + objetivo.getNombre() + "!");
-                objetivo.recibirDanio(danio);
-                return true;
-            }
-        });
+        // 1. Kamehameha (Default): potente ráfaga de Ki concentrada a un objetivo
+        Habilidad kamehameha = new HabilidadOfensiva(
+                "Kamehameha",
+                "¡KA... ME... HA... ME... HA! Dispara una colosal onda de Ki que pulveriza al objetivo.",
+                22,
+                TipoObjetivo.ENEMIGO_INDIVIDUAL,
+                2.4,
+                false
+        );
 
-        // Habilidad 1: Tormenta Arcana (área: todos los enemigos vivos)
-        habs.add(new Habilidad("⚡ Tormenta Arcana [Área]", 35) {
-            @Override
-            public boolean ejecutar(Personaje lanzador, List<Combatiente> objetivos, Batalla batalla) {
-                if (!lanzador.gastarMana(getCosteMana())) return false;
-                int danio = (lanzador.getAtaque() + (intelCaptura / 2)) * lanzador.getNivel();
-                RegistroCombate.registrar("⚡ ¡" + lanzador.getNombre()
-                        + " desata una Tormenta Arcana sobre TODOS los enemigos!");
-                for (Combatiente objetivo : objetivos) {
-                    if (objetivo.estaVivo()) objetivo.recibirDanio(danio);
-                }
-                return true;
-            }
-        });
+        // 2. Genkidama: devastación en área
+        Habilidad genkidama = new HabilidadOfensiva(
+                "Genkidama",
+                "Reúne la energía de los seres vivos y arroja una inmensa esfera de energía que arrasa a todos los enemigos.",
+                38,
+                TipoObjetivo.ENEMIGOS_TODOS,
+                1.7,
+                false
+        );
 
-        return habs;
+        // 3. Cargar Ki: concentración y recarga de maná
+        Habilidad cargarKi = new HabilidadDeEstado(
+                "Cargar Ki",
+                "Expulsa un aura blanca y grita con determinación recargando rápidamente gran porción de su Ki/Maná.",
+                0,
+                TipoObjetivo.PROPIO,
+                HabilidadDeEstado.EfectoEstado.CARGAR_KI
+        );
+
+        catalogoHabilidades.add(kamehameha);
+        catalogoHabilidades.add(genkidama);
+        catalogoHabilidades.add(cargarKi);
+
+        // Comienza con la primera habilidad por defecto
+        habilidadesDesbloqueadas.add(kamehameha);
     }
 }

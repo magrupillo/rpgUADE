@@ -7,9 +7,6 @@ import rpg.vista.PantallaBatalla;
 /**
  * Controlador específico del combate en MVC.
  * Coordina las acciones tácticas entre la {@link PantallaBatalla} y el modelo {@link Batalla}.
- *
- * Durante el turno de los enemigos, todos los botones de la interfaz permanecen bloqueados
- * hasta que el controlador devuelva el turno a la party (manejado en la vista).
  */
 public class ControladorBatalla {
 
@@ -33,10 +30,18 @@ public class ControladorBatalla {
 
     // ─── Acciones del jugador ─────────────────────────────────────────────────────
 
+    public void atacar(int indiceHeroe, int indiceObjetivo) {
+        ejecutarAtaqueBasico(indiceHeroe, indiceObjetivo);
+    }
+
     public void ejecutarAtaqueBasico(int indiceHeroe, int indiceObjetivo) {
         if (batalla.verificarFin()) return;
         batalla.ejecutarAtaqueHeroe(indiceHeroe, indiceObjetivo);
         actualizarVista();
+    }
+
+    public void usarHabilidad(int indiceHeroe, int indiceHabilidad, int indiceObjetivo) {
+        ejecutarHabilidad(indiceHeroe, indiceHabilidad, indiceObjetivo);
     }
 
     public void ejecutarHabilidad(int indiceHeroe, int indiceObjetivo) {
@@ -55,6 +60,10 @@ public class ControladorBatalla {
         actualizarVista();
     }
 
+    public void usarItem(int indiceHeroe, int indiceItem, int indiceObjetivo) {
+        usarItem(indiceHeroe, indiceItem);
+    }
+
     public void defender(int indiceHeroe) {
         if (batalla.verificarFin()) return;
         batalla.defenderHeroe(indiceHeroe);
@@ -62,6 +71,10 @@ public class ControladorBatalla {
     }
 
     // ─── Fin de combate ───────────────────────────────────────────────────────────
+
+    public void procesarFinDeCombate(boolean victoria) {
+        continuarFinDeCombate();
+    }
 
     public void continuarFinDeCombate() {
         if (controladorJuego != null) {
