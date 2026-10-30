@@ -124,6 +124,11 @@ public class Juego implements Serializable {
 
     public void entrarPiso(int nuevoPiso) {
         if (nuevoPiso <= pisoMaximoDesbloqueado && nuevoPiso <= TOTAL_PISOS) {
+            // Si ya estamos en este piso y el mapa sigue en curso, no lo reseteamos
+            if (this.piso == nuevoPiso && this.mapa != null && !this.mapa.esJefePisoCompletado()) {
+                RegistroCombate.registrar("\nContinuando la exploración del Piso " + piso + " de la Torre...");
+                return;
+            }
             this.piso = nuevoPiso;
             this.mapa = new Mapa(piso);
             RegistroCombate.registrar("\nEntrando al Piso " + piso + " de la Torre...");

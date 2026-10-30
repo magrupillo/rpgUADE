@@ -34,7 +34,7 @@ public class PantallaTorre extends JPanel {
         JPanel pnlTop = new JPanel(new BorderLayout(15, 0));
         pnlTop.setOpaque(false);
 
-        lblOro = new JLabel("💰 Oro: $50");
+        lblOro = new JLabel("Oro: $50");
         lblOro.setFont(new Font("Segoe UI", Font.BOLD, 18));
         lblOro.setForeground(EstilosUI.COLOR_ORO);
         pnlTop.add(lblOro, BorderLayout.WEST);
@@ -70,7 +70,7 @@ public class PantallaTorre extends JPanel {
 
         pnlCentro.add(Box.createVerticalStrut(4));
 
-        JLabel lblSub = new JLabel("Supera los 3 pisos de la torre para derrotar a Bowser y coronar la victoria", SwingConstants.CENTER);
+        JLabel lblSub = new JLabel("Supera los 3 pisos de la torre para alcanzar la cima y coronar la victoria", SwingConstants.CENTER);
         lblSub.setFont(EstilosUI.FUENTE_NORMAL);
         lblSub.setForeground(EstilosUI.TEXTO_MUTED);
         lblSub.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -78,20 +78,20 @@ public class PantallaTorre extends JPanel {
 
         pnlCentro.add(Box.createVerticalStrut(30));
 
-        // Piso 3 (Cúspide - Bowser)
-        btnPiso3 = crearTarjetaPiso("PISO 3: CÚSPIDE DE LA TORRE (Jefe Final: Bowser)", 3);
+        // Piso 3 (Cúspide)
+        btnPiso3 = crearTarjetaPiso("PISO 3: CÚSPIDE DE LA TORRE", 3);
         pnlCentro.add(btnPiso3);
 
         pnlCentro.add(Box.createVerticalStrut(18));
 
         // Piso 2 (Profundidades)
-        btnPiso2 = crearTarjetaPiso("PISO 2: PROFUNDIDADES PELIGROSAS", 2);
+        btnPiso2 = crearTarjetaPiso("PISO 2: PROFUNDIDADES DE LA TORRE", 2);
         pnlCentro.add(btnPiso2);
 
         pnlCentro.add(Box.createVerticalStrut(18));
 
         // Piso 1 (Base)
-        btnPiso1 = crearTarjetaPiso("PISO 1: BASE DE LA TORRE (Entrada)", 1);
+        btnPiso1 = crearTarjetaPiso("PISO 1: BASE DE LA TORRE", 1);
         pnlCentro.add(btnPiso1);
 
         add(pnlCentro, BorderLayout.CENTER);
@@ -118,7 +118,7 @@ public class PantallaTorre extends JPanel {
     public void actualizar(Juego juego) {
         if (juego == null) return;
         this.pisoMaximoDesbloqueado = juego.getPisoMaximoDesbloqueado();
-        lblOro.setText("💰 Oro: $" + juego.getParty().getOro());
+        lblOro.setText("Oro: $" + juego.getParty().getOro());
 
         // Actualizar notificación de puntos pendientes
         if (juego.getParty().tienePuntosAtributosPendientes()) {
@@ -129,22 +129,22 @@ public class PantallaTorre extends JPanel {
             btnGestion.setBackground(new Color(41, 128, 185));
         }
 
-        configurarBotonPiso(btnPiso1, 1, "PISO 1: BASE DE LA TORRE (Jefe: Dr. Eggman)", juego.getPiso());
-        configurarBotonPiso(btnPiso2, 2, "PISO 2: PROFUNDIDADES PELIGROSAS (Jefe: Darth Vader)", juego.getPiso());
-        configurarBotonPiso(btnPiso3, 3, "PISO 3: CÚSPIDE DE LA TORRE (Jefe Final: Bowser)", juego.getPiso());
+        configurarBotonPiso(btnPiso1, 1, "PISO 1: BASE DE LA TORRE", juego.getPiso());
+        configurarBotonPiso(btnPiso2, 2, "PISO 2: PROFUNDIDADES DE LA TORRE", juego.getPiso());
+        configurarBotonPiso(btnPiso3, 3, "PISO 3: CÚSPIDE DE LA TORRE", juego.getPiso());
     }
 
     private void configurarBotonPiso(JButton btn, int piso, String titulo, int pisoActualJuego) {
         if (piso < pisoMaximoDesbloqueado) {
-            btn.setText("✔ " + titulo + " [SUPERADO]");
+            btn.setText("[SUPERADO] " + titulo);
             btn.setEnabled(false); // Bloqueado: no se puede volver a jugar un piso ya ganado
             btn.setBackground(new Color(35, 75, 45));
         } else if (piso == pisoMaximoDesbloqueado) {
-            btn.setText("▶ " + titulo + " [DISPONIBLE]");
+            btn.setText("[DISPONIBLE] " + titulo);
             btn.setEnabled(true);
             btn.setBackground(new Color(211, 84, 0));
         } else {
-            btn.setText("🔒 " + titulo + " [BLOQUEADO]");
+            btn.setText("[BLOQUEADO] " + titulo);
             btn.setEnabled(false);
             btn.setBackground(new Color(45, 50, 65));
         }

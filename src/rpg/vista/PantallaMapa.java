@@ -46,7 +46,7 @@ public class PantallaMapa extends JPanel {
         lblPiso.setFont(EstilosUI.FUENTE_TITULO);
         lblPiso.setForeground(EstilosUI.COLOR_ORO);
 
-        lblOro = new JLabel("💰 Oro: $50");
+        lblOro = new JLabel("Oro: $50");
         lblOro.setFont(new Font("Segoe UI", Font.BOLD, 17));
         lblOro.setForeground(EstilosUI.COLOR_ORO);
 
@@ -68,14 +68,8 @@ public class PantallaMapa extends JPanel {
             if (controlador != null) controlador.guardarPartida();
         });
 
-        JButton btnTorre = EstilosUI.crearBoton("Vista Torre", new Color(70, 80, 95), new Color(90, 100, 120));
-        btnTorre.addActionListener(e -> {
-            if (controlador != null) controlador.mostrarPantallaTorre();
-        });
-
         pnlBotones.add(btnParty);
         pnlBotones.add(btnGuardar);
-        pnlBotones.add(btnTorre);
         barraSuperior.add(pnlBotones, BorderLayout.EAST);
 
         add(barraSuperior, BorderLayout.NORTH);
@@ -114,7 +108,7 @@ public class PantallaMapa extends JPanel {
 
     public void actualizar(MapaDTO mapaDTO, int oroActual, boolean tienePuntosPendientes) {
         lblPiso.setText("Piso " + mapaDTO.getPiso() + " de la Torre (" + mapaDTO.getPiso() + "/3)");
-        lblOro.setText("💰 Oro: $" + oroActual);
+        lblOro.setText("Oro: $" + oroActual);
 
         if (tienePuntosPendientes) {
             btnParty.setText("Héroes y Equipo (Puntos pendientes!)");
@@ -248,7 +242,7 @@ public class PantallaMapa extends JPanel {
 
         // Estado / Botón
         if (n.isCompletado()) {
-            JLabel lblComp = new JLabel("✔ Completada", SwingConstants.CENTER);
+            JLabel lblComp = new JLabel("[Completada]", SwingConstants.CENTER);
             lblComp.setFont(new Font("Segoe UI", Font.BOLD, 11));
             lblComp.setForeground(new Color(46, 204, 113));
             card.add(lblComp, BorderLayout.SOUTH);
@@ -263,7 +257,7 @@ public class PantallaMapa extends JPanel {
             });
             card.add(btnAvanzar, BorderLayout.SOUTH);
         } else {
-            JLabel lblBloq = new JLabel("🔒 En espera", SwingConstants.CENTER);
+            JLabel lblBloq = new JLabel("[En espera]", SwingConstants.CENTER);
             lblBloq.setFont(new Font("Segoe UI", Font.ITALIC, 11));
             lblBloq.setForeground(EstilosUI.TEXTO_MUTED);
             card.add(lblBloq, BorderLayout.SOUTH);

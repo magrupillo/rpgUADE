@@ -354,14 +354,8 @@ public class PanelAcciones extends JPanel {
             HabilidadDTO hab = habsDTO.get(slot);
             boolean tieneMana = h.getMana() >= hab.getCosteMana();
 
-            String colorMana = tieneMana ? "#85c1e9" : "#e74c3c";
-            String textoMana = hab.getCosteMana() > 0 ? hab.getCosteMana() + " MP" : "0 MP (Gratis)";
-            if (!tieneMana) {
-                textoMana += " (Sin MP)";
-            }
-
-            btn.setText("<html><center><span style='font-size:11px;'><b>" + hab.getNombre() + "</b></span><br><span style='font-size:10px; color:" + colorMana + ";'><b>" + textoMana + "</b></span></center></html>");
-            btn.setToolTipText(hab.getTooltipFormateado());
+            btn.setText("<html><center><b>" + hab.getNombre() + "</b></center></html>");
+            btn.setToolTipText(hab.getTooltipFormateado(tieneMana));
             btn.setEnabled(tieneMana);
             btn.setBackground(tieneMana ? new Color(110, 45, 155) : new Color(50, 40, 60));
         } else if (slot < h.getHabilidades().size()) {
@@ -372,7 +366,7 @@ public class PanelAcciones extends JPanel {
             btn.setEnabled(true);
             btn.setBackground(new Color(110, 45, 155));
         } else {
-            btn.setText("<html><center><font color='#888888'>[Bloqueada]</font><br><font size='2' color='#666666'>-- MP</font></center></html>");
+            btn.setText("<html><center><font color='#888888'>[Bloqueada]</font></center></html>");
             btn.setToolTipText("<html><body style='width: 220px; font-family: Segoe UI; font-size: 11px;'><b>Habilidad Bloqueada</b><br><span style='color: #bdc3c7;'>Aún no aprendida. Se desbloquea al subir de nivel en el menú 'Héroes y Equipo'.</span></body></html>");
             btn.setEnabled(false);
             btn.setBackground(new Color(35, 40, 50));

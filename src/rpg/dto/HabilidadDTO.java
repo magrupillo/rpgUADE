@@ -37,13 +37,19 @@ public class HabilidadDTO implements Serializable {
         return tipoObjetivoSimple;
     }
 
-    public String getTooltipFormateado() {
+    public String getTooltipFormateado(boolean tieneMana) {
+        String avisoMana = tieneMana ? "" : "<div style='color: #e74c3c; font-weight: bold; margin-bottom: 3px;'>[Sin maná suficiente para ejecutar]</div>";
         return "<html><body style='width: 240px; padding: 3px; font-family: Segoe UI; font-size: 11px;'>"
                 + "<div style='font-size: 12px; font-weight: bold; color: #f1c40f; margin-bottom: 2px;'>"
                 + nombre + " <span style='color: #85c1e9;'>(" + costeMana + " MP)</span></div>"
+                + avisoMana
                 + "<div style='color: #e67e22; margin-bottom: 3px;'><b>Objetivo:</b> " + tipoObjetivoSimple + "</div>"
                 + "<div style='color: #ecf0f1; line-height: 1.3;'>" + descripcion + "</div>"
                 + "</body></html>";
+    }
+
+    public String getTooltipFormateado() {
+        return getTooltipFormateado(true);
     }
 
     @Override

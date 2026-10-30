@@ -126,15 +126,22 @@ public abstract class Personaje implements Combatiente {
     public List<HabilidadDTO> getHabilidadesDTO() {
         List<HabilidadDTO> lista = new ArrayList<>();
         for (Habilidad h : habilidadesDesbloqueadas) {
-            String tipoDesc = switch (h.getTipoObjetivo()) {
-                case ENEMIGO_INDIVIDUAL -> "Ataque a 1 enemigo";
-                case ENEMIGOS_TODOS -> "Ataque en área (todos los enemigos)";
-                case ALIADO_INDIVIDUAL -> "Afecta a 1 aliado";
-                case ALIADO_MAS_HERIDO -> "Cura al aliado más herido";
-                case ALIADOS_TODOS -> "Afecta a todos los aliados";
-                case PROPIO -> "Habilidad propia / Auto-mejora";
-                default -> "Objetivo táctico";
-            };
+            String tipoDesc;
+            if (h.getNombre().equalsIgnoreCase("Ira de los Dioses")) {
+                tipoDesc = "Provoca que los enemigos lo ataquen solo a él";
+            } else if (h.getNombre().equalsIgnoreCase("Cargar Ki")) {
+                tipoDesc = "Recarga Ki/Maná propio";
+            } else {
+                tipoDesc = switch (h.getTipoObjetivo()) {
+                    case ENEMIGO_INDIVIDUAL -> "Ataque a 1 enemigo";
+                    case ENEMIGOS_TODOS -> "Ataque en área (todos los enemigos)";
+                    case ALIADO_INDIVIDUAL -> "Afecta a 1 aliado";
+                    case ALIADO_MAS_HERIDO -> "Cura al aliado más herido";
+                    case ALIADOS_TODOS -> "Afecta a todos los aliados";
+                    case PROPIO -> "Habilidad propia / Auto-mejora";
+                    default -> "Objetivo táctico";
+                };
+            }
             lista.add(new HabilidadDTO(h.getNombre(), h.getCosteMana(), h.getDescripcion(), tipoDesc));
         }
         return lista;
