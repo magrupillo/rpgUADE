@@ -1,10 +1,7 @@
 package rpg.vista;
 
 import rpg.controlador.ControladorBatalla;
-import rpg.dto.EntidadDTO;
-import rpg.dto.EstadoBatallaDTO;
-import rpg.dto.ItemDTO;
-import rpg.dto.PersonajeDTO;
+import rpg.dto.*;
 import rpg.util.EstilosUI;
 import rpg.util.GestorRecursos;
 
@@ -34,6 +31,10 @@ public class PanelAcciones extends JPanel {
     private final JButton btnDefender;
     private final JButton btnContinuar;
 
+    private final CardLayout cardLayoutCentral;
+    private final JPanel panelCentral;
+    private final JLabel lblResultadoFin;
+
     private JLabel lblNombreHeroe;
     private JLabel lblTipoHeroe;
     private JLabel lblStatsHeroe;
@@ -50,6 +51,7 @@ public class PanelAcciones extends JPanel {
     public PanelAcciones() {
         setLayout(new BorderLayout(6, 4));
         setBackground(EstilosUI.FONDO_PANEL);
+        setPreferredSize(new Dimension(0, 115));
         setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createMatteBorder(2, 0, 0, 0, EstilosUI.BORDE_SUAVE),
                 BorderFactory.createEmptyBorder(6, 12, 6, 12)
@@ -59,40 +61,41 @@ public class PanelAcciones extends JPanel {
         JPanel panelInfoHeroe = crearPanelInfoHeroe();
         add(panelInfoHeroe, BorderLayout.WEST);
 
-        // ── Panel central: Selectores + Botones Directos de Habilidad ─────────────
-        JPanel panelCentral = new JPanel(new BorderLayout(4, 4));
+        // ── Panel central con CardLayout: Cambia entre COMBATE y FIN DE COMBATE ───
+        cardLayoutCentral = new CardLayout();
+        panelCentral = new JPanel(cardLayoutCentral);
         panelCentral.setOpaque(false);
+
+        // --- Card COMBATE ---
+        JPanel cardCombate = new JPanel(new BorderLayout(4, 4));
+        cardCombate.setOpaque(false);
 
         // Fila Superior: Selectores de Objetivo y Consumible
         JPanel panelSelectores = new JPanel(new GridLayout(1, 2, 10, 0));
         panelSelectores.setOpaque(false);
         panelSelectores.add(crearSelector("Objetivo (Clic en enemigo o elegir):", comboObjetivos = new JComboBox<>(), new Color(192, 57, 43)));
         panelSelectores.add(crearSelector("Consumible del Inventario:", comboItems = new JComboBox<>(), new Color(39, 174, 96)));
-        panelCentral.add(panelSelectores, BorderLayout.NORTH);
+        cardCombate.add(panelSelectores, BorderLayout.NORTH);
 
         // Fila Inferior: Botones de Acción Táctica
         JPanel panelBotones = new JPanel(new FlowLayout(FlowLayout.CENTER, 6, 2));
         panelBotones.setOpaque(false);
 
         btnAtacar = crearBotonAccion("ATACAR",
-                "Ataque físico básico contra el objetivo seleccionado",
-                new Color(180, 50, 35), new Color(220, 70, 50), 95);
+                "<html><b>Ataque Físico Básico</b><br>Objetivo: 1 enemigo seleccionado.<br>Daño directo según el ATQ del héroe. Coste: 0 MP.</html>",
+                new Color(180, 50, 35), new Color(220, 70, 50), 85, 38);
 
-        btnHab1 = crearBotonAccion("Hab 1", "Habilidad táctica 1", new Color(120, 55, 165), new Color(145, 80, 190), 135);
-        btnHab2 = crearBotonAccion("Hab 2", "Habilidad táctica 2", new Color(120, 55, 165), new Color(145, 80, 190), 135);
-        btnHab3 = crearBotonAccion("Hab 3", "Habilidad táctica 3", new Color(120, 55, 165), new Color(145, 80, 190), 135);
+        btnHab1 = crearBotonAccion("Hab 1", "Habilidad táctica 1", new Color(110, 45, 155), new Color(135, 65, 180), 140, 38);
+        btnHab2 = crearBotonAccion("Hab 2", "Habilidad táctica 2", new Color(110, 45, 155), new Color(135, 65, 180), 140, 38);
+        btnHab3 = crearBotonAccion("Hab 3", "Habilidad táctica 3", new Color(110, 45, 155), new Color(135, 65, 180), 140, 38);
 
         btnUsarItem = crearBotonAccion("POCIÓN",
-                "Consumir la poción seleccionada del inventario",
-                new Color(30, 155, 80), new Color(40, 195, 105), 105);
+                "<html><b>Poción / Consumible</b><br>Objetivo: Héroe activo.<br>Consume la poción elegida del inventario.</html>",
+                new Color(30, 155, 80), new Color(40, 195, 105), 95, 38);
 
         btnDefender = crearBotonAccion("DEFENDER",
-                "Postura defensiva: +100% DEF y regenera 10% MP/Ki hasta tu próximo turno",
-                new Color(30, 100, 165), new Color(45, 135, 210), 100);
-
-        btnContinuar = EstilosUI.crearBoton("CONTINUAR", new Color(39, 174, 96), new Color(46, 204, 113));
-        btnContinuar.setFont(new Font("Segoe UI", Font.BOLD, 14));
-        btnContinuar.setVisible(false);
+                "<html><b>Postura Defensiva</b><br>Objetivo: Propio.<br>Duplica DEF hasta el siguiente turno y regenera 10% MP/Ki.</html>",
+                new Color(30, 100, 165), new Color(45, 135, 210), 95, 38);
 
         panelBotones.add(btnAtacar);
         panelBotones.add(btnHab1);
@@ -100,9 +103,29 @@ public class PanelAcciones extends JPanel {
         panelBotones.add(btnHab3);
         panelBotones.add(btnUsarItem);
         panelBotones.add(btnDefender);
-        panelBotones.add(btnContinuar);
-        panelCentral.add(panelBotones, BorderLayout.CENTER);
+        cardCombate.add(panelBotones, BorderLayout.CENTER);
 
+        // --- Card FIN DE COMBATE (Grande, despejado y sin tapar) ---
+        JPanel cardFin = new JPanel(new GridBagLayout());
+        cardFin.setOpaque(false);
+        GridBagConstraints gbcFin = new GridBagConstraints();
+        gbcFin.gridx = 0;
+        gbcFin.gridy = 0;
+        gbcFin.insets = new Insets(0, 0, 8, 0);
+
+        lblResultadoFin = new JLabel("¡COMBATE FINALIZADO!", SwingConstants.CENTER);
+        lblResultadoFin.setFont(new Font("Segoe UI", Font.BOLD, 18));
+        lblResultadoFin.setForeground(EstilosUI.COLOR_ORO);
+        cardFin.add(lblResultadoFin, gbcFin);
+
+        gbcFin.gridy = 1;
+        btnContinuar = EstilosUI.crearBoton("CONTINUAR", new Color(39, 174, 96), new Color(46, 204, 113));
+        btnContinuar.setFont(new Font("Segoe UI", Font.BOLD, 15));
+        btnContinuar.setPreferredSize(new Dimension(320, 44));
+        cardFin.add(btnContinuar, gbcFin);
+
+        panelCentral.add(cardCombate, "COMBATE");
+        panelCentral.add(cardFin, "FIN");
         add(panelCentral, BorderLayout.CENTER);
 
         configurarEventos();
@@ -162,11 +185,11 @@ public class PanelAcciones extends JPanel {
         return p;
     }
 
-    private JButton crearBotonAccion(String texto, String tooltip, Color base, Color hover, int ancho) {
+    private JButton crearBotonAccion(String texto, String tooltip, Color base, Color hover, int ancho, int alto) {
         JButton btn = EstilosUI.crearBoton(texto, base, hover);
         btn.setFont(new Font("Segoe UI", Font.BOLD, 11));
         btn.setToolTipText(tooltip);
-        btn.setPreferredSize(new Dimension(ancho, 34));
+        btn.setPreferredSize(new Dimension(ancho, alto));
         return btn;
     }
 
@@ -259,14 +282,16 @@ public class PanelAcciones extends JPanel {
 
         if (estadoDTO.isBatallaTerminada()) {
             setBotonesAccionHabilitados(false);
-            btnContinuar.setVisible(true);
+            cardLayoutCentral.show(panelCentral, "FIN");
             btnContinuar.setText(estadoDTO.isVictoria() ? "VER RECOMPENSAS" : "VER RESULTADOS");
-            lblTurnoMensaje.setText(estadoDTO.isVictoria() ? "Victoria!" : "Derrota!");
+            lblResultadoFin.setText(estadoDTO.isVictoria() ? "¡VICTORIA EN EL COMBATE!" : "¡PARTY DERROTADA!");
+            lblResultadoFin.setForeground(estadoDTO.isVictoria() ? new Color(46, 204, 113) : new Color(231, 76, 60));
+            lblTurnoMensaje.setText(estadoDTO.isVictoria() ? "Victoria" : "Derrota");
             lblStatsHeroe.setText(estadoDTO.getMensajeFin());
             return;
         }
 
-        btnContinuar.setVisible(false);
+        cardLayoutCentral.show(panelCentral, "COMBATE");
         setBotonesAccionHabilitados(true);
 
         int idxHeroe = estadoDTO.getIndiceHeroeActivo();
@@ -283,7 +308,7 @@ public class PanelAcciones extends JPanel {
             Image img = GestorRecursos.obtenerSprite(h.getTipo(), 54, 54);
             if (img != null) lblSpriteHeroe.setIcon(new ImageIcon(img));
 
-            // Configurar botones directos para las 3 habilidades
+            // Configurar botones directos para las 3 habilidades con coste de maná y tooltips
             configurarBotonHabilidad(btnHab1, h, 0);
             configurarBotonHabilidad(btnHab2, h, 1);
             configurarBotonHabilidad(btnHab3, h, 2);
@@ -324,19 +349,33 @@ public class PanelAcciones extends JPanel {
     }
 
     private void configurarBotonHabilidad(JButton btn, PersonajeDTO h, int slot) {
-        List<String> habs = h.getHabilidades();
-        if (slot < habs.size()) {
-            String textoCompleto = habs.get(slot);
+        List<HabilidadDTO> habsDTO = h.getHabilidadesDTO();
+        if (habsDTO != null && slot < habsDTO.size()) {
+            HabilidadDTO hab = habsDTO.get(slot);
+            boolean tieneMana = h.getMana() >= hab.getCosteMana();
+
+            String colorMana = tieneMana ? "#85c1e9" : "#e74c3c";
+            String textoMana = hab.getCosteMana() > 0 ? hab.getCosteMana() + " MP" : "0 MP (Gratis)";
+            if (!tieneMana) {
+                textoMana += " (Sin MP)";
+            }
+
+            btn.setText("<html><center><span style='font-size:11px;'><b>" + hab.getNombre() + "</b></span><br><span style='font-size:10px; color:" + colorMana + ";'><b>" + textoMana + "</b></span></center></html>");
+            btn.setToolTipText(hab.getTooltipFormateado());
+            btn.setEnabled(tieneMana);
+            btn.setBackground(tieneMana ? new Color(110, 45, 155) : new Color(50, 40, 60));
+        } else if (slot < h.getHabilidades().size()) {
+            String textoCompleto = h.getHabilidades().get(slot);
             String nombreCorto = extraerNombreHabilidad(textoCompleto);
             btn.setText("<html><center><b>" + nombreCorto + "</b></center></html>");
             btn.setToolTipText(textoCompleto);
             btn.setEnabled(true);
-            btn.setBackground(new Color(120, 55, 165));
+            btn.setBackground(new Color(110, 45, 155));
         } else {
-            btn.setText("<html><center><font color='#888888'>[Bloqueada]</font></center></html>");
-            btn.setToolTipText("Habilidad aún no aprendida. Se desbloquea al subir de nivel en 'Héroes y Equipo'.");
+            btn.setText("<html><center><font color='#888888'>[Bloqueada]</font><br><font size='2' color='#666666'>-- MP</font></center></html>");
+            btn.setToolTipText("<html><body style='width: 220px; font-family: Segoe UI; font-size: 11px;'><b>Habilidad Bloqueada</b><br><span style='color: #bdc3c7;'>Aún no aprendida. Se desbloquea al subir de nivel en el menú 'Héroes y Equipo'.</span></body></html>");
             btn.setEnabled(false);
-            btn.setBackground(new Color(45, 50, 65));
+            btn.setBackground(new Color(35, 40, 50));
         }
     }
 

@@ -1,5 +1,6 @@
 package rpg.modelo;
 
+import rpg.dto.HabilidadDTO;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -120,6 +121,23 @@ public abstract class Personaje implements Combatiente {
             nombres.add(h.toString());
         }
         return nombres;
+    }
+
+    public List<HabilidadDTO> getHabilidadesDTO() {
+        List<HabilidadDTO> lista = new ArrayList<>();
+        for (Habilidad h : habilidadesDesbloqueadas) {
+            String tipoDesc = switch (h.getTipoObjetivo()) {
+                case ENEMIGO_INDIVIDUAL -> "Ataque a 1 enemigo";
+                case ENEMIGOS_TODOS -> "Ataque en área (todos los enemigos)";
+                case ALIADO_INDIVIDUAL -> "Afecta a 1 aliado";
+                case ALIADO_MAS_HERIDO -> "Cura al aliado más herido";
+                case ALIADOS_TODOS -> "Afecta a todos los aliados";
+                case PROPIO -> "Habilidad propia / Auto-mejora";
+                default -> "Objetivo táctico";
+            };
+            lista.add(new HabilidadDTO(h.getNombre(), h.getCosteMana(), h.getDescripcion(), tipoDesc));
+        }
+        return lista;
     }
 
     // ─── Getters Combatiente ─────────────────────────────────────────────────────

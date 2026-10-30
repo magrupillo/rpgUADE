@@ -41,7 +41,7 @@ public class PanelRegistro extends JPanel {
         scrollPane = new JScrollPane(areaLog);
         scrollPane.setBorder(BorderFactory.createLineBorder(EstilosUI.BORDE_SUAVE, 1));
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-        scrollPane.setPreferredSize(new Dimension(0, 210));
+        scrollPane.setPreferredSize(new Dimension(0, 140));
 
         add(scrollPane, BorderLayout.CENTER);
     }

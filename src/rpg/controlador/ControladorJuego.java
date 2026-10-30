@@ -281,7 +281,8 @@ public class ControladorJuego implements NodoVisitor {
                     p.getMana(), p.getManaMaximo(), p.getNivel(), p.getAtaque(),
                     p.getDefensa(), p.getVelocidad(), p.estaVivo(), p.isDefendiendo(),
                     p.getRutaSprite(), p.getExperiencia(), p.getExperienciaSiguienteNivel(),
-                    armaNom, armaduraNom, p.getPuntosAtributoDisponibles(), p.getNombresHabilidades()
+                    armaNom, armaduraNom, p.getPuntosAtributoDisponibles(), p.getNombresHabilidades(),
+                    p.getHabilidadesDTO()
             ));
         }
         return lista;
