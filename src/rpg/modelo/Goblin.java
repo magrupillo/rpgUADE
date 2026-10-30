@@ -10,14 +10,6 @@ public class Goblin extends Enemigo {
         super(nombre, 150, 24, 10, 18, 45, 10);
     }
 
-    public Goblin() {
-        this("El Duende Verde");
-    }
-
-    public Goblin(String nombre, int vida, int ataque, int defensa, int velocidad, int xp, int oro) {
-        super(nombre, vida, ataque, defensa, velocidad, xp, oro);
-    }
-
     /**
      * IA del Duende Verde: Busca y ataca con saña al héroe más herido de la party.
      */

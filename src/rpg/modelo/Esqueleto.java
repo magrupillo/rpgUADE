@@ -15,14 +15,6 @@ public class Esqueleto extends Enemigo {
         super(nombre, 190, 28, 13, 13, 60, 14);
     }
 
-    public Esqueleto() {
-        this("Skeletor");
-    }
-
-    public Esqueleto(String nombre, int vida, int ataque, int defensa, int velocidad, int xp, int oro) {
-        super(nombre, vida, ataque, defensa, velocidad, xp, oro);
-    }
-
     /**
      * IA de Skeletor:
      * Cada dos turnos usa el Bastón del Caos para ATURDIR a un héroe al azar (pierde su próximo turno).

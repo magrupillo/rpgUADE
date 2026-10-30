@@ -39,17 +39,6 @@ public abstract class Habilidad implements Serializable {
         return tipoObjetivo;
     }
 
-    public boolean esObjetivoMultiple() {
-        return tipoObjetivo == TipoObjetivo.ENEMIGOS_TODOS || tipoObjetivo == TipoObjetivo.ALIADOS_TODOS;
-    }
-
-    public boolean apuntaAliados() {
-        return tipoObjetivo == TipoObjetivo.ALIADO_INDIVIDUAL
-                || tipoObjetivo == TipoObjetivo.ALIADO_MAS_HERIDO
-                || tipoObjetivo == TipoObjetivo.ALIADOS_TODOS
-                || tipoObjetivo == TipoObjetivo.PROPIO;
-    }
-
     /**
      * Ejecuta la habilidad sobre la lista de objetivos.
      *

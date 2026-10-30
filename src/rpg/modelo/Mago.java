@@ -12,10 +12,6 @@ public class Mago extends Personaje {
         inicializarCatalogoHabilidades();
     }
 
-    public Mago() {
-        this("Goku");
-    }
-
     public int getInteligencia() {
         return inteligencia;
     }

@@ -56,10 +56,6 @@ public class Batalla implements Serializable {
         calcularOrdenTurnos();
     }
 
-    public boolean huboVictoria() {
-        return isVictoria();
-    }
-
     public String getLugar()             { return lugar; }
     public Party getParty()              { return party; }
     public List<Enemigo> getEnemigos()   { return enemigos; }

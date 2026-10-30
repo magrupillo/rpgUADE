@@ -3,7 +3,6 @@ package rpg.vista;
 import rpg.controlador.ControladorBatalla;
 import rpg.controlador.ControladorJuego;
 import rpg.dto.*;
-import rpg.dto.RecompensaDTO;
 import rpg.modelo.Juego;
 import rpg.modelo.Party;
 import rpg.util.EstilosUI;

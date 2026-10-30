@@ -12,10 +12,6 @@ public class Guerrero extends Personaje {
         inicializarCatalogoHabilidades();
     }
 
-    public Guerrero() {
-        this("Kratos");
-    }
-
     public int getFuerza() {
         return fuerza;
     }

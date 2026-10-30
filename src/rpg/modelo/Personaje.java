@@ -1,7 +1,6 @@
 package rpg.modelo;
 
 import rpg.dto.HabilidadDTO;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;

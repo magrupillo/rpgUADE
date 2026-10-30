@@ -10,14 +10,6 @@ public class Orco extends Enemigo {
         super(nombre, 240, 32, 16, 10, 70, 16);
     }
 
-    public Orco() {
-        this("Cocodrilo Asesino");
-    }
-
-    public Orco(String nombre, int vida, int ataque, int defensa, int velocidad, int xp, int oro) {
-        super(nombre, vida, ataque, defensa, velocidad, xp, oro);
-    }
-
     /**
      * IA de Cocodrilo Asesino: Ataca con brutalidad al héroe de mayor amenaza (Kratos si provocó)
      * o al primer héroe vivo disponible.

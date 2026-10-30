@@ -12,10 +12,6 @@ public class Arquero extends Personaje {
         inicializarCatalogoHabilidades();
     }
 
-    public Arquero() {
-        this("Tommy Shelby");
-    }
-
     public int getPunteria() {
         return punteria;
     }

@@ -10,14 +10,6 @@ public class Chaman extends Enemigo {
         super(nombre, 170, 26, 12, 15, 65, 15);
     }
 
-    public Chaman() {
-        this("Quan Chi");
-    }
-
-    public Chaman(String nombre, int vida, int ataque, int defensa, int velocidad, int xp, int oro) {
-        super(nombre, vida, ataque, defensa, velocidad, xp, oro);
-    }
-
     /**
      * IA de Quan Chi:
      * Cura a su ALIADO más herido (no a sí mismo) si tiene menos del 60% de HP.

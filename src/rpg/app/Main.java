@@ -2,6 +2,7 @@ package rpg.app;
 
 import rpg.controlador.ControladorJuego;
 import rpg.modelo.Juego;
+import rpg.util.EstilosUI;
 import rpg.vista.PantallaBatalla;
 
 import javax.swing.*;
@@ -21,7 +22,7 @@ public class Main {
         SwingUtilities.invokeLater(() -> {
             try {
                 // Paleta oscura de fantasía aplicada a Nimbus (diálogos, combos, tooltips)
-                rpg.util.EstilosUI.aplicarTemaOscuro();
+                EstilosUI.aplicarTemaOscuro();
                 // Look and Feel moderno del sistema o Nimbus
                 for (UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
                     if ("Nimbus".equals(info.getName())) {

@@ -1,6 +1,5 @@
 package rpg.modelo;
 
-import java.io.Serializable;
 import java.util.List;
 import java.util.Random;
 
@@ -36,11 +35,6 @@ public abstract class Enemigo implements Combatiente {
         this.experienciaOtorgada = experienciaOtorgada;
         this.oroOtorgado = oroOtorgado;
         this.defendiendo = false;
-    }
-
-    public Enemigo(String nombre, int vida, int ataque, int defensa,
-                   int velocidad, int experienciaOtorgada) {
-        this(nombre, vida, ataque, defensa, velocidad, experienciaOtorgada, 30);
     }
 
     // ─── Combatiente ─────────────────────────────────────────────────────────────

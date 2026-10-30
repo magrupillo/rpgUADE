@@ -12,8 +12,7 @@ public class Party implements Serializable {
     private List<Personaje> miembros;
     private Inventario inventario;
     private int oro;
-    private final int MAX_MIEMBROS = 4;
-    private final int MIN_MIEMBROS = 2;
+    private static final int MAX_MIEMBROS = 4;
     private final Random random = new Random();
 
     public Party() {
@@ -31,10 +30,6 @@ public class Party implements Serializable {
             RegistroCombate.registrar("El equipo ya está lleno (máximo " + MAX_MIEMBROS + " miembros).");
             return false;
         }
-    }
-
-    public boolean tieneMinimoMiembros() {
-        return miembros.size() >= MIN_MIEMBROS;
     }
 
     public List<Personaje> getMiembros() {

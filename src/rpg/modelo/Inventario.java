@@ -133,15 +133,4 @@ public class Inventario implements Serializable {
         }
         return false;
     }
-
-    public void listarItems() {
-        RegistroCombate.registrar("--- INVENTARIO ---");
-        if (items.isEmpty()) {
-            RegistroCombate.registrar("(Vacío)");
-            return;
-        }
-        for (int i = 0; i < items.size(); i++) {
-            RegistroCombate.registrar((i + 1) + ". " + items.get(i));
-        }
-    }
 }

@@ -8,8 +8,6 @@ import rpg.util.PanelVidrio;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.List;
 
 public class PantallaCreacionParty extends JPanel {
     private ControladorJuego controlador;

@@ -12,10 +12,6 @@ public class Curador extends Personaje {
         inicializarCatalogoHabilidades();
     }
 
-    public Curador() {
-        this("El Guasón");
-    }
-
     public int getPoderCurativo() {
         return poderCurativo;
     }

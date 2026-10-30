@@ -25,14 +25,6 @@ public class Jefe extends Enemigo {
         this.contadorTurno = 0;
     }
 
-    public Jefe(String nombre) {
-        this(3); // Por defecto Bowser en Piso 3
-    }
-
-    public Jefe() {
-        this(3);
-    }
-
     public static Jefe crearJefeParaPiso(int piso) {
         return new Jefe(piso);
     }
